@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+
+<groupId>org.example</groupId>
+<artifactId>NCTool</artifactId>
+<version>1.0-SNAPSHOT</version>
+
+<properties>
+    <javafx.version>13</javafx.version>
+    <maven.compiler.release>11</maven.compiler.release>
+</properties>
+
+<repositories>
+    <repository>
+        <releases>
+            <enabled>false</enabled>
+        </releases>
+        <snapshots>
+            <enabled>true</enabled>
+        </snapshots>
+        <id>ias-snapshots</id>
+        <name>Infinite Automation Snapshot Repository</name>
+        <url>https://maven.mangoautomation.net/repository/ias-snapshot/</url>
+    </repository>
+    <repository>
+        <releases>
+            <enabled>true</enabled>
+        </releases>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>ias-releases</id>
+        <name>Infinite Automation Release Repository</name>
+        <url>https://maven.mangoautomation.net/repository/ias-release/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.serotonin</groupId>
+        <artifactId>bacnet4j</artifactId>
+        <version>4.1.6</version>
+    </dependency>
+    <dependency>
+        <groupId>com.infiniteautomation</groupId>
+        <artifactId>bacnet4j</artifactId>
+        <version>5.0.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-controls</artifactId>
+        <version>${javafx.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
+        <version>${javafx.version}</version>
+    </dependency>
+</dependencies>
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.3</version>
+            <configuration>
+                <release>${maven.compiler.release}</release>
+                <jlinkImageName>hellofx</jlinkImageName>
+                <launcher>launcher</launcher>
+                <mainClass>com.virusapp.Main</mainClass>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+</project>
