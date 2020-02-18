@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.virusapp.controller.Nc">
+   <children>
+      <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+         <left>
+            <TableView prefHeight="575.0" prefWidth="228.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn maxWidth="20.0" minWidth="120.0" prefWidth="20.0" resizable="false" text="Device" />
+                <TableColumn maxWidth="5.0" minWidth="110.0" prefWidth="0.0" resizable="false" text="ID" />
+              </columns>
+            </TableView>
+         </left>
+         <center>
+            <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <columns>
+                <TableColumn prefWidth="125.0" text="Notification Class" />
+                  <TableColumn prefWidth="125.0" text="Notification Class" />
+                  <TableColumn prefWidth="125.0" text="Notification Class" />
+                  <TableColumn prefWidth="125.0" text="Notification Class" />
+              </columns>
+            </TableView>
+         </center>
+         <bottom>
+            <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <buttons>
+                <Button mnemonicParsing="false" text="Löschen" translateX="-190.0" />
+                  <Button layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Device" />
+                  <TextField />
+              </buttons>
+               <BorderPane.margin>
+                  <Insets left="5.0" right="5.0" />
+               </BorderPane.margin>
+            </ButtonBar>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
