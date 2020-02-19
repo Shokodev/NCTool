@@ -7,9 +7,8 @@ import com.virusapp.Main;
 public class Listener extends DeviceEventAdapter {
 
     @Override
-    public void iAmReceived(RemoteDevice d) {
-        super.iAmReceived(d);
-        Main.deviceService.getRemoteDevices().add(d);
-        System.out.println(d);
+    public void iAmReceived(RemoteDevice remoteDevice) {
+        super.iAmReceived(remoteDevice);
+        Main.ownDevice.getRemoteDevices().add(remoteDevice);
     }
 }

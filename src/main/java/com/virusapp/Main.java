@@ -3,7 +3,7 @@ package com.virusapp;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
-import com.virusapp.bacnet.DeviceService;
+import com.virusapp.bacnet.OwnDevice;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +12,7 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    public static DeviceService deviceService;
+    public static OwnDevice ownDevice;
 
     private static Scene scene;
 
@@ -22,9 +22,10 @@ public class Main extends Application {
         ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
         ipNetworkBuilder.withBroadcast("255.255.255.255",IpNetwork.BVLC_TYPE);
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
-        deviceService = new DeviceService(1001,defaultTransport);
-        deviceService.createLocalDevice();
+        ownDevice = new OwnDevice(145001,defaultTransport);
+        ownDevice.createLocalDevice();
 
+        System.out.println("");
         //FXML start
         try {
             scene = new Scene(loadFXML("Nc"));
