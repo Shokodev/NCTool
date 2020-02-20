@@ -44,6 +44,7 @@ public class NotificationClassObject extends RemoteObject {
     public String getOid() {
         return getObjectIdentifier().toString();
     }
+
     public String getDescription() {
         return description;
     }
@@ -53,7 +54,6 @@ public class NotificationClassObject extends RemoteObject {
     public String getName() {
         return name;
     }
-
 
     @Override
     public String getObjectName() {

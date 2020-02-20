@@ -10,6 +10,8 @@ import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +25,7 @@ import java.util.List;
  */
 public class OwnDevice extends LocalDevice {
     private List<BACnetDevice> bacnetDevicesDevices = new LinkedList<>();
+    static final Logger LOG = LoggerFactory.getLogger(OwnDevice.class);
 
     public OwnDevice(int deviceNumber, Transport transport) {
         super(deviceNumber, transport);
@@ -35,8 +38,10 @@ public class OwnDevice extends LocalDevice {
             initialize();
         } catch(Exception e){
             System.err.println("LocalDevice initialize failed, restart the application may solve this problem");
+            LOG.error("LocalDevice initialize failed, restart the application may solve this problem");
         }
         System.out.println("Successfully created LocalDevice " + getInstanceNumber());
+        LOG.debug("Successfully created LocalDevice " + getInstanceNumber());
         scanForRemoteDevices();
         getRemoteDeviceInformation();
         scanAndAddAllNCObjects();
