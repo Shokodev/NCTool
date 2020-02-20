@@ -11,8 +11,6 @@ import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.List;
  *  of this license document, but changing it is not allowed.
  */
 public class OwnDevice extends LocalDevice {
-    private List<RemoteDevice> remoteDevices = new LinkedList<>();
+    private List<BACnetDevice> bacnetDevicesDevices = new LinkedList<>();
 
     public OwnDevice(int deviceNumber, Transport transport) {
         super(deviceNumber, transport);
@@ -71,16 +69,15 @@ public class OwnDevice extends LocalDevice {
      * @return massage and boolean
      */
     private boolean alertNoDeviceFound(){
-        if (getRemoteDevices().isEmpty()){
+        if (getBacnetDevicesDevices().isEmpty()){
             System.err.println("No remote devices found");
             return false;
         }
         return true;
     }
 
-    @Override
-    public List<RemoteDevice> getRemoteDevices() {
-        return remoteDevices;
+    public List<BACnetDevice> getBacnetDevicesDevices() {
+        return bacnetDevicesDevices;
     }
 
     /**
@@ -88,10 +85,13 @@ public class OwnDevice extends LocalDevice {
      */
     private void getRemoteDeviceInformation() {
 
-        for (RemoteDevice remoteDevice : getRemoteDevices()) {
+        for (BACnetDevice bacnetDevice : getBacnetDevicesDevices()) {
             try {
-                remoteDevice.setDeviceProperty(PropertyIdentifier.objectName,RequestUtils.readProperty(this,remoteDevice,remoteDevice.getObjectIdentifier(),PropertyIdentifier.objectName,null));
-                System.out.println("Device " + remoteDevice.getName() + " discovered");
+                bacnetDevice.getBacNetDeviceInfo().setDeviceProperty(PropertyIdentifier.objectName,
+                        RequestUtils.readProperty(this,bacnetDevice.getBacNetDeviceInfo(),
+                                bacnetDevice.getBacNetDeviceInfo().getObjectIdentifier(),
+                                PropertyIdentifier.objectName,null));
+                System.out.println("Device " + bacnetDevice.getBacNetDeviceInfo().getName() + " discovered");
             } catch (BACnetException e) {
                 e.printStackTrace();
             }
@@ -114,17 +114,18 @@ public class OwnDevice extends LocalDevice {
      * Reads all BACnet Objects of all remote devises
     */
     private void scanAndAddAllNCObjects(){
-        for (RemoteDevice remoteDevice : getRemoteDevices()) {
+        for (BACnetDevice bacnetDevice : getBacnetDevicesDevices()) {
             try {
                 List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
                         RequestUtils.sendReadPropertyAllowNull(
-                                this, remoteDevice, remoteDevice.getObjectIdentifier(),
+                                this, bacnetDevice.getBacNetDeviceInfo(), bacnetDevice.getBacNetDeviceInfo().getObjectIdentifier(),
                                 PropertyIdentifier.objectList)).getValues();
                 for (ObjectIdentifier oid : oids) {
                     if(oid.getObjectType().equals(ObjectType.notificationClass)){
-                    NotificationClassObject notificationClassObject = new NotificationClassObject(oid,remoteDevice);
-                    remoteDevice.setObject(notificationClassObject);
-                    System.out.println("NC: " + notificationClassObject.getObjectName() + " added for device " + remoteDevice.getName());
+                    NotificationClassObject notificationClassObject = new NotificationClassObject(oid,bacnetDevice);
+                    bacnetDevice.getNotificationClassObjects().add(notificationClassObject);
+                    System.out.println("NC: " + notificationClassObject.getObjectName()
+                            + " added for device " + bacnetDevice.getBacNetDeviceInfo().getName());
                     notificationClassObject.readDestinations();
                     }
                 }} catch (BACnetException e) {
