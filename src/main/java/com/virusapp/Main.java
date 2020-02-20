@@ -11,10 +11,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * @Version 1.0
+ * @Author Andreas Vogt, Daniel Reiter & Rafael Grimm
+ * @LICENCE Copyright (C)
+ *  Everyone is permitted to copy and distribute verbatim copies
+ *  of this license document, but changing it is not allowed.
+ */
 public class Main extends Application {
 
     public static OwnDevice ownDevice;
-
     private static Scene scene;
 
     @Override
@@ -26,6 +32,7 @@ public class Main extends Application {
         ownDevice = new OwnDevice(145001,defaultTransport);
         ownDevice.createLocalDevice();
         System.out.println("");
+
         //FXML start
         try {
             scene = new Scene(loadFXML("Nc"));

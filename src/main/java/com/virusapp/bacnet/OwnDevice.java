@@ -11,11 +11,20 @@ import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @Version 1.0
+ * @Author Andreas Vogt, Daniel Reiter & Rafael Grimm
+ * @LICENCE Copyright (C)
+ *  Everyone is permitted to copy and distribute verbatim copies
+ *  of this license document, but changing it is not allowed.
+ */
 public class OwnDevice extends LocalDevice {
-
     private List<RemoteDevice> remoteDevices = new LinkedList<>();
 
     public OwnDevice(int deviceNumber, Transport transport) {
@@ -96,7 +105,7 @@ public class OwnDevice extends LocalDevice {
     private void rebaseLocalDeviceIfExists(){
         if(Main.ownDevice != null){
             Main.ownDevice.terminate();
-            System.out.println("*********************Reset*********************");
+            System.err.println("*********************Reset*********************");
 
         }
     }
@@ -105,7 +114,6 @@ public class OwnDevice extends LocalDevice {
      * Reads all BACnet Objects of all remote devises
     */
     private void scanAndAddAllNCObjects(){
-
         for (RemoteDevice remoteDevice : getRemoteDevices()) {
             try {
                 List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
