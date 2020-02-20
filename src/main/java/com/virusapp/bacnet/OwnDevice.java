@@ -20,7 +20,6 @@ public class OwnDevice extends LocalDevice {
 
     public OwnDevice(int deviceNumber, Transport transport) {
         super(deviceNumber, transport);
-
     }
 
     public void createLocalDevice() {

@@ -4,6 +4,7 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.virusapp.bacnet.OwnDevice;
+import com.virusapp.controller.Nc;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -24,7 +25,6 @@ public class Main extends Application {
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
         ownDevice = new OwnDevice(145001,defaultTransport);
         ownDevice.createLocalDevice();
-
         System.out.println("");
         //FXML start
         try {
@@ -37,15 +37,13 @@ public class Main extends Application {
     }
 
     private static Parent loadFXML(String fxml) throws Exception {
+        Nc ncController = new Nc(ownDevice);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.virusapp/" + fxml +".fxml"));
+        fxmlLoader.setController(ncController);
         return fxmlLoader.load();
     }
 
-
-
-/*    public static void setRoot(String fxml) throws Exception {
-        scene.setRoot(loadFXML(fxml));
-    }*/
-
-
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

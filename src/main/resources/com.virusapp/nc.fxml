@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Text?>
 
 
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.virusapp.controller.Nc">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
@@ -60,9 +60,9 @@
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
                 <Button mnemonicParsing="false" text="Löschen" translateX="-190.0" />
-                  <Button layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Device" />
-                  <TextField />
+                  <Button fx:id="writeToDevice" layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Desigo CC" />
+                  <TextField fx:id="instanceNumber"/>
               </buttons>
                <BorderPane.margin>
                   <Insets left="5.0" right="5.0" />
