@@ -5,7 +5,6 @@ import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.constructed.Destination;
 import com.serotonin.bacnet4j.type.constructed.SequenceOf;
-import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
@@ -24,26 +23,26 @@ import java.util.List;
  */
 public class NotificationClassObject extends RemoteObject {
 
-    private RemoteDevice remoteDevice;
+    private BACnetDevice bacnetDevice;
     private List<Destination> recipientList = new LinkedList<>();
 
-    public NotificationClassObject(ObjectIdentifier oid, RemoteDevice remoteDevice) {
+    public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
         super(Main.ownDevice,oid);
-        this.remoteDevice = remoteDevice;
+        this.bacnetDevice = bacnetDevice;
     }
 
     @Override
     public String getObjectName() {
         try {
-            return RequestUtils.readProperty(Main.ownDevice,remoteDevice,super.getObjectIdentifier(),PropertyIdentifier.objectName,null).toString();
+            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),PropertyIdentifier.objectName,null).toString();
         } catch (BACnetException e) {
             System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
         }
         return "COM";
     }
 
-    public RemoteDevice getRemoteDevice() {
-        return remoteDevice;
+    public BACnetDevice getBacnetDevice() {
+        return bacnetDevice;
     }
 
     public List<Destination> getRecipientList() {
@@ -52,11 +51,11 @@ public class NotificationClassObject extends RemoteObject {
 
     public void readDestinations(){
         try {
+            recipientList.clear();
             List<Destination> destinations = ((SequenceOf<Destination>)
                     RequestUtils.sendReadPropertyAllowNull(
-                            Main.ownDevice, remoteDevice, super.getObjectIdentifier(),
+                            Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
-            recipientList.clear();
             recipientList.addAll(destinations);
         } catch (BACnetException e) {
             System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
@@ -66,9 +65,9 @@ public class NotificationClassObject extends RemoteObject {
     //TODO Test effect of property array Index
     public void writeDestination(Destination destination, UnsignedInteger propertyArrayIndex)  {
         try {
-            RequestUtils.writeProperty(Main.ownDevice,remoteDevice,super.getObjectIdentifier(),PropertyIdentifier.recipientList,propertyArrayIndex);
+            RequestUtils.writeProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),PropertyIdentifier.recipientList,propertyArrayIndex);
         } catch (BACnetException e) {
-            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + super.getObjectIdentifier() + " on " + remoteDevice.getName());
+            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + super.getObjectIdentifier() + " on " + bacnetDevice.getBacNetDeviceInfo().getName());
         }
     }
 
