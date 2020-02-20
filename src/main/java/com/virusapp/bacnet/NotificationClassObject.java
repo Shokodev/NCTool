@@ -8,23 +8,28 @@ import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
+import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
 
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * @Version 1.0
+ * @Author Andreas Vogt, Daniel Reiter & Rafael Grimm
+ * @LICENCE Copyright (C)
+ *  Everyone is permitted to copy and distribute verbatim copies
+ *  of this license document, but changing it is not allowed.
+ */
 public class NotificationClassObject extends RemoteObject {
 
     private RemoteDevice remoteDevice;
-    private ObjectType objectType;
     private List<Destination> recipientList = new LinkedList<>();
 
     public NotificationClassObject(ObjectIdentifier oid, RemoteDevice remoteDevice) {
         super(Main.ownDevice,oid);
         this.remoteDevice = remoteDevice;
-        this.objectType = oid.getObjectType();
     }
 
     @Override
@@ -41,10 +46,6 @@ public class NotificationClassObject extends RemoteObject {
         return remoteDevice;
     }
 
-    public ObjectType getObjectType() {
-        return objectType;
-    }
-
     public List<Destination> getRecipientList() {
         return recipientList;
     }
@@ -55,15 +56,17 @@ public class NotificationClassObject extends RemoteObject {
                     RequestUtils.sendReadPropertyAllowNull(
                             Main.ownDevice, remoteDevice, super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
+            recipientList.clear();
             recipientList.addAll(destinations);
         } catch (BACnetException e) {
             System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
         }
     }
 
-    public void writeDestination(Destination destination)  {
+    //TODO Test effect of property array Index
+    public void writeDestination(Destination destination, UnsignedInteger propertyArrayIndex)  {
         try {
-            RequestUtils.writeProperty(Main.ownDevice,remoteDevice,super.getObjectIdentifier(),PropertyIdentifier.recipientList,null);
+            RequestUtils.writeProperty(Main.ownDevice,remoteDevice,super.getObjectIdentifier(),PropertyIdentifier.recipientList,propertyArrayIndex);
         } catch (BACnetException e) {
             System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + super.getObjectIdentifier() + " on " + remoteDevice.getName());
         }
