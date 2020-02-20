@@ -1,7 +1,6 @@
 package com.virusapp.bacnet;
 
 import com.serotonin.bacnet4j.LocalDevice;
-import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.service.unconfirmed.WhoIsRequest;
 import com.serotonin.bacnet4j.transport.Transport;
@@ -69,14 +68,14 @@ public class OwnDevice extends LocalDevice {
      * @return massage and boolean
      */
     private boolean alertNoDeviceFound(){
-        if (getBacnetDevicesDevices().isEmpty()){
+        if (getBacnetDevices().isEmpty()){
             System.err.println("No remote devices found");
             return false;
         }
         return true;
     }
 
-    public List<BACnetDevice> getBacnetDevicesDevices() {
+    public List<BACnetDevice> getBacnetDevices() {
         return bacnetDevicesDevices;
     }
 
@@ -85,7 +84,7 @@ public class OwnDevice extends LocalDevice {
      */
     private void getRemoteDeviceInformation() {
 
-        for (BACnetDevice bacnetDevice : getBacnetDevicesDevices()) {
+        for (BACnetDevice bacnetDevice : getBacnetDevices()) {
             try {
                 bacnetDevice.getBacNetDeviceInfo().setDeviceProperty(PropertyIdentifier.objectName,
                         RequestUtils.readProperty(this,bacnetDevice.getBacNetDeviceInfo(),
@@ -114,7 +113,7 @@ public class OwnDevice extends LocalDevice {
      * Reads all BACnet Objects of all remote devises
     */
     private void scanAndAddAllNCObjects(){
-        for (BACnetDevice bacnetDevice : getBacnetDevicesDevices()) {
+        for (BACnetDevice bacnetDevice : getBacnetDevices()) {
             try {
                 List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
                         RequestUtils.sendReadPropertyAllowNull(

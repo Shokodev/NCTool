@@ -13,10 +13,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Text?>
 
-
-<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <BorderPane prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
          <top>
             <MenuBar BorderPane.alignment="CENTER">
               <menus>
@@ -39,20 +38,21 @@
             </MenuBar>
          </top>
          <left>
-            <TableView prefHeight="575.0" prefWidth="228.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="remoteDeviceTableView" prefHeight="575.0" prefWidth="228.0" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn maxWidth="20.0" minWidth="120.0" prefWidth="20.0" resizable="false" text="Device" />
-                <TableColumn maxWidth="5.0" minWidth="110.0" prefWidth="0.0" resizable="false" text="ID" />
+                <TableColumn fx:id="deviceNameColumn" maxWidth="20.0" minWidth="120.0" prefWidth="20.0" resizable="false" text="Device" />
+                <TableColumn fx:id="idColumn" maxWidth="5.0" minWidth="110.0" prefWidth="0.0" resizable="false" text="ID" />
               </columns>
             </TableView>
          </left>
          <center>
-            <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="notifiTableView" prefHeight="535.0" prefWidth="669.0" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn prefWidth="125.0" text="Notification Class" />
-                  <TableColumn prefWidth="125.0" text="Notification Class" />
-                  <TableColumn prefWidth="125.0" text="Notification Class" />
-                  <TableColumn prefWidth="125.0" text="Notification Class" />
+                <TableColumn fx:id="notificationTableColumn" prefWidth="119.0" text="Object Identifier" />
+                  <TableColumn fx:id="objectNameColumn" prefWidth="131.0" text="Name" />
+                  <TableColumn fx:id="descriptionColumn" prefWidth="125.0" text="Beschreibung" />
+                  <TableColumn fx:id="notificationClassColumn" prefWidth="125.0" text="Notification Class" />
+                  <TableColumn fx:id="recipientListColumn" prefWidth="200.0" text="Empfängerliste" />
               </columns>
             </TableView>
          </center>
@@ -62,7 +62,7 @@
                 <Button mnemonicParsing="false" text="Löschen" translateX="-190.0" />
                   <Button fx:id="writeToDevice" layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Desigo CC" />
-                  <TextField fx:id="instanceNumber"/>
+                  <TextField fx:id="instanceNumber" />
               </buttons>
                <BorderPane.margin>
                   <Insets left="5.0" right="5.0" />

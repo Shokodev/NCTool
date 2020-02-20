@@ -1,6 +1,5 @@
 package com.virusapp.bacnet;
 
-import com.serotonin.bacnet4j.RemoteDevice;
 import com.serotonin.bacnet4j.RemoteObject;
 import com.serotonin.bacnet4j.exception.BACnetException;
 import com.serotonin.bacnet4j.type.constructed.Destination;
@@ -10,6 +9,7 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -25,11 +25,35 @@ public class NotificationClassObject extends RemoteObject {
 
     private BACnetDevice bacnetDevice;
     private List<Destination> recipientList = new LinkedList<>();
+    private String description;
+    private Integer notificationClass;
+    private String name;
+
+
+
 
     public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
-        super(Main.ownDevice,oid);
+        super(Main.ownDevice, oid);
         this.bacnetDevice = bacnetDevice;
+        this.name = getObjectName();
+        this.notificationClass = Integer.parseInt(readProperty(PropertyIdentifier.notificationClass));
+        this.description = readProperty(PropertyIdentifier.description);
+
     }
+
+    public String getOid() {
+        return getObjectIdentifier().toString();
+    }
+    public String getDescription() {
+        return description;
+    }
+    public Integer getNotificationClass() {
+        return notificationClass;
+    }
+    public String getName() {
+        return name;
+    }
+
 
     @Override
     public String getObjectName() {
@@ -60,6 +84,15 @@ public class NotificationClassObject extends RemoteObject {
         } catch (BACnetException e) {
             System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
         }
+    }
+
+    private String readProperty(PropertyIdentifier propertyIdentifier){
+        try {
+            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),propertyIdentifier,null).toString();
+        } catch (BACnetException e) {
+            System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
+        }
+        return "COM";
     }
 
     //TODO Test effect of property array Index
