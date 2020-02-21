@@ -1,5 +1,6 @@
 package com.virusapp;
 
+import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
@@ -10,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @Version 1.0
@@ -22,6 +25,7 @@ public class Main extends Application {
 
     public static OwnDevice ownDevice;
     private static Scene scene;
+    static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     @Override
     public void start(Stage stage) {
@@ -31,13 +35,15 @@ public class Main extends Application {
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
         ownDevice = new OwnDevice(145001,defaultTransport);
         ownDevice.createLocalDevice();
-        System.out.println("");
+
+
 
         //FXML start
         try {
             scene = new Scene(loadFXML("Nc"));
         } catch (Exception e) {
             e.printStackTrace();
+            LOG.error("Cant load scene");
         }
         stage.setScene(scene);
         stage.show();
