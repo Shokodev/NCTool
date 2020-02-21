@@ -1,20 +1,18 @@
 package com.virusapp.controller;
 
-import com.serotonin.bacnet4j.RemoteDevice;
 import com.virusapp.bacnet.BACnetDevice;
 import com.virusapp.bacnet.NotificationClassObject;
 import com.virusapp.bacnet.OwnDevice;
-import javafx.beans.InvalidationListener;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 import java.net.URL;
 import java.util.List;
@@ -51,7 +49,7 @@ public class Nc implements Initializable {
     @FXML
     private TableColumn<NotificationClassObject, String> notificationClassColumn;
     @FXML
-    private TableColumn<NotificationClassObject, String> recipientListColumn;
+    private TableColumn<NotificationClassObject, NotificationClassObject> recipientListColumn;
 
 
 
@@ -60,21 +58,21 @@ public class Nc implements Initializable {
     private ObservableList<NotificationClassObject> destinations;
 
 
-    private void loadDestinationList() {
+    private void loadRemoteDevices() {
         try{
-
             List<BACnetDevice> bacnetDevices = ownDeviceModel.getBacnetDevices();
             obsListRemoteDevices = FXCollections.observableArrayList(bacnetDevices);
-
-            List<NotificationClassObject> notis = ownDeviceModel.getBacnetDevices().get(0).notificationClassObjects;
-            destinations = FXCollections.observableArrayList(notis);
 
             deviceNameColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("device"));
             idColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("id"));
 
             remoteDeviceTableView.setItems(obsListRemoteDevices);
-            remoteDeviceTableView.setOnMouseClicked(e -> {
-                selection();
+            remoteDeviceTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    BACnetDevice baCnetDevice = remoteDeviceTableView.getSelectionModel().getSelectedItem();
+                    loadNotificationClassObjects(baCnetDevice);
+                }
             });
 
         } catch (Exception e) {
@@ -82,25 +80,58 @@ public class Nc implements Initializable {
         }
     }
 
+    private void loadNotificationClassObjects(BACnetDevice baCnetDevice) {
+        final Button btn = new Button("load");
 
-    private void selection() {
-
-        System.out.println(remoteDeviceTableView.getSelectionModel().getSelectedItems());
-
+        List<NotificationClassObject> notis = baCnetDevice.notificationClassObjects;
+        destinations = FXCollections.observableArrayList(notis);
         //Notifi Table
         notificationTableColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("oid"));
         objectNameColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("name"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("description"));
+       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
+       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
+       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
+       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
         notificationClassColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("notificationClass"));
-        recipientListColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("recipientList"));
+
+        recipientListColumn.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
+        recipientListColumn.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<NotificationClassObject, NotificationClassObject> call(TableColumn<NotificationClassObject, NotificationClassObject> param) {
+
+                return new TableCell<>() {
+                    final Button button = new Button();
+                    {
+                        button.setMinWidth(80);
+                        button.setText("button");
+                    }
+                    @Override
+                    public void updateItem(NotificationClassObject notificationClassObject, boolean empty) {
+                        super.updateItem(notificationClassObject, empty);
+                        if (notificationClassObject != null) {
+                            setGraphic(button);
+                            button.setOnAction(event -> System.out.println(notificationClassObject));
+                        }
+                    }
+
+                };
+            }
+        });
+
+
+
         notifiTableView.setItems(destinations);
 
     }
 
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-    loadDestinationList();
+    loadRemoteDevices();
+
+
 
 
     }

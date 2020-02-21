@@ -10,6 +10,7 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Button;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +31,6 @@ public class NotificationClassObject extends RemoteObject {
     private String name;
 
 
-
-
     public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
         super(Main.ownDevice, oid);
         this.bacnetDevice = bacnetDevice;
@@ -44,7 +43,6 @@ public class NotificationClassObject extends RemoteObject {
     public String getOid() {
         return getObjectIdentifier().toString();
     }
-
     public String getDescription() {
         return description;
     }
@@ -54,6 +52,7 @@ public class NotificationClassObject extends RemoteObject {
     public String getName() {
         return name;
     }
+
 
     @Override
     public String getObjectName() {
