@@ -8,11 +8,13 @@ import com.serotonin.bacnet4j.type.constructed.*;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
+import com.serotonin.bacnet4j.util.ReadListener;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -130,7 +132,6 @@ public class OwnDevice extends LocalDevice {
                     bacnetDevice.getNotificationClassObjects().add(notificationClassObject);
                     System.out.println("NC: " + notificationClassObject.getObjectName()
                             + " added for device " + bacnetDevice.getBacNetDeviceInfo().getName());
-                    notificationClassObject.readDestinations();
                     }
                 }} catch (BACnetException e) {
                 System.err.println("Failed to read objects");

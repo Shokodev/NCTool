@@ -1,6 +1,7 @@
 package com.virusapp.controller;
 
 import com.virusapp.bacnet.BACnetDevice;
+import com.virusapp.bacnet.DestinationObject;
 import com.virusapp.bacnet.NotificationClassObject;
 import com.virusapp.bacnet.OwnDevice;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -14,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
+import javax.print.attribute.standard.Destination;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -48,6 +50,7 @@ public class Nc implements Initializable {
     private TableColumn<NotificationClassObject, String> descriptionColumn;
     @FXML
     private TableColumn<NotificationClassObject, String> notificationClassColumn;
+    //Destinations
     @FXML
     private TableColumn<NotificationClassObject, NotificationClassObject> recipientListColumn;
 
@@ -55,7 +58,9 @@ public class Nc implements Initializable {
 
     private ObservableList<BACnetDevice> obsListRemoteDevices;
 
-    private ObservableList<NotificationClassObject> destinations;
+    private ObservableList<NotificationClassObject> obsListNCobjects;
+
+    private ObservableList<DestinationObject> obsListDestinations;
 
 
     private void loadRemoteDevices() {
@@ -84,15 +89,11 @@ public class Nc implements Initializable {
         final Button btn = new Button("load");
 
         List<NotificationClassObject> notis = baCnetDevice.notificationClassObjects;
-        destinations = FXCollections.observableArrayList(notis);
+        obsListNCobjects = FXCollections.observableArrayList(notis);
         //Notifi Table
         notificationTableColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("oid"));
         objectNameColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("name"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("description"));
-       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
-       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
-       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
-       // descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, Integer>("description"));
         notificationClassColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("notificationClass"));
 
         recipientListColumn.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
@@ -104,14 +105,14 @@ public class Nc implements Initializable {
                     final Button button = new Button();
                     {
                         button.setMinWidth(80);
-                        button.setText("button");
+                        button.setText("Empfänger");
                     }
                     @Override
                     public void updateItem(NotificationClassObject notificationClassObject, boolean empty) {
                         super.updateItem(notificationClassObject, empty);
                         if (notificationClassObject != null) {
                             setGraphic(button);
-                            button.setOnAction(event -> System.out.println(notificationClassObject));
+                            button.setOnAction(event -> loadDestinationObjects(notificationClassObject));
                         }
                     }
 
@@ -119,13 +120,22 @@ public class Nc implements Initializable {
             }
         });
 
-
-
-        notifiTableView.setItems(destinations);
+        notifiTableView.setItems(obsListNCobjects);
 
     }
 
 
+    private void loadDestinationObjects(NotificationClassObject notificationClassObject){
+        List<DestinationObject> destinations = notificationClassObject.getRecipientList();
+        obsListDestinations = FXCollections.observableArrayList(destinations);
+       for (DestinationObject destinationObject : obsListDestinations) {
+           System.out.println("destis =");
+           System.out.println(destinationObject.getDeviceID());
+           System.out.println(destinationObject.getProcessIdentifierINT());
+           System.out.println("*******************************");
+
+       }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

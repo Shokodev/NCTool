@@ -10,8 +10,8 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.scene.control.Button;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,36 +24,31 @@ import java.util.List;
  */
 public class NotificationClassObject extends RemoteObject {
 
+    //backend
     private BACnetDevice bacnetDevice;
-    private List<Destination> recipientList = new LinkedList<>();
+    private List<DestinationObject> recipientList = new LinkedList<>();
+
+
+    //frontend
     private String description;
     private Integer notificationClass;
     private String name;
-
+    private Integer prioToOffNormal;
+    private Integer prioToFault;
+    private Integer prioToNormal;
 
     public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
         super(Main.ownDevice, oid);
         this.bacnetDevice = bacnetDevice;
+        readPriority();
+        readDestinations();
         this.name = getObjectName();
         this.notificationClass = Integer.parseInt(readProperty(PropertyIdentifier.notificationClass));
         this.description = readProperty(PropertyIdentifier.description);
-
-    }
-
-    public String getOid() {
-        return getObjectIdentifier().toString();
-    }
-    public String getDescription() {
-        return description;
-    }
-    public Integer getNotificationClass() {
-        return notificationClass;
-    }
-    public String getName() {
-        return name;
     }
 
 
+    //backend
     @Override
     public String getObjectName() {
         try {
@@ -68,18 +63,21 @@ public class NotificationClassObject extends RemoteObject {
         return bacnetDevice;
     }
 
-    public List<Destination> getRecipientList() {
+    public List<DestinationObject> getRecipientList() {
         return recipientList;
     }
 
-    public void readDestinations(){
+    private void readDestinations(){
         try {
             recipientList.clear();
             List<Destination> destinations = ((SequenceOf<Destination>)
                     RequestUtils.sendReadPropertyAllowNull(
                             Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
-            recipientList.addAll(destinations);
+            for (Destination destination : destinations){
+            DestinationObject destinationObject = new DestinationObject(destination);
+            recipientList.add(destinationObject);
+            }
         } catch (BACnetException e) {
             System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
         }
@@ -94,6 +92,23 @@ public class NotificationClassObject extends RemoteObject {
         return "COM";
     }
 
+    private void readPriority(){
+        try {
+            // Index is setteld by BACnet
+            this.prioToOffNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
+                    PropertyIdentifier.priority,new UnsignedInteger(1)).toString());
+            this.prioToFault = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
+                    PropertyIdentifier.priority,new UnsignedInteger(2)).toString());
+            this.prioToNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
+                    PropertyIdentifier.priority,new UnsignedInteger(3)).toString());
+        } catch (BACnetException e){
+            System.err.println("Could not read priority of:" + super.getObjectIdentifier());
+        }
+    }
+
     //TODO Test effect of property array Index
     public void writeDestination(Destination destination, UnsignedInteger propertyArrayIndex)  {
         try {
@@ -102,5 +117,36 @@ public class NotificationClassObject extends RemoteObject {
             System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + super.getObjectIdentifier() + " on " + bacnetDevice.getBacNetDeviceInfo().getName());
         }
     }
+
+
+    // frontend
+    public String getOid() {
+        return getObjectIdentifier().toString();
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Integer getNotificationClass() {
+        return notificationClass;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Integer getPrioToOffNormal() {
+        return prioToOffNormal;
+    }
+
+    public Integer getPrioToFault() {
+        return prioToFault;
+    }
+
+    public Integer getPrioToNormal() {
+        return prioToNormal;
+    }
+
 
 }
