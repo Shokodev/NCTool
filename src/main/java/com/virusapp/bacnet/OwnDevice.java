@@ -8,6 +8,7 @@ import com.serotonin.bacnet4j.type.constructed.*;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
+import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -143,25 +144,17 @@ public class OwnDevice extends LocalDevice {
     public void deleteDestinationOnAllNC(Integer deviceID) {
         for (BACnetDevice bacnetDevice : getBacnetDevices()) {
             for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
-                for (DestinationObject destinationObject : notificationClassObject.getRecipientList()){
-                    if(destinationObject.getProcessIdentifierINT().equals(deviceID)){
-                        try {
-                            RequestUtils.writeProperty(Main.ownDevice, notificationClassObject.getBacnetDevice().bacNetDeviceInfo, notificationClassObject.getObjectIdentifier(), PropertyIdentifier.recipientList, null, 8);
-                            Main.ownDevice.updateAfterPropertyWritten();
-                        } catch (BACnetException e) {
-                            System.err.println("Could not delete destination at " + notificationClassObject.getObjectIdentifier() + " on " + notificationClassObject.getBacnetDevice().bacNetDeviceInfo.getName());
-                        }
+                for (DestinationObject destinationObject : notificationClassObject.getRecipientList()) {
+                    if (destinationObject.getProcessIdentifierID().equals(deviceID)) {
+                        destinationObject.writeDestination(null);
+                        destinationObject.writeProcessIdentifier(null);
                     }
                 }
-
-
             }
-
-
+            System.out.println("Deleted");
+            updateAfterPropertyWritten();
         }
-
     }
-
     /**
      * Reads all BACnet Objects of all remote devises
     */

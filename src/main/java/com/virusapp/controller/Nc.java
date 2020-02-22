@@ -1,5 +1,6 @@
 package com.virusapp.controller;
 
+import com.virusapp.Main;
 import com.virusapp.bacnet.BACnetDevice;
 import com.virusapp.bacnet.DestinationObject;
 import com.virusapp.bacnet.NotificationClassObject;
@@ -12,10 +13,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
-import javax.print.attribute.standard.Destination;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -48,6 +50,13 @@ public class Nc implements Initializable {
     private TableColumn<NotificationClassObject, String> objectNameColumn;
     @FXML
     private TableColumn<NotificationClassObject, String> descriptionColumn;
+    @FXML
+    private TableColumn<NotificationClassObject, String> prioToOffNormalColumn;
+    @FXML
+    private TableColumn<NotificationClassObject, String> prioToFaultColumn;
+    @FXML
+    private TableColumn<NotificationClassObject, String> prioToNormalColumn;
+
     @FXML
     private TableColumn<NotificationClassObject, String> notificationClassColumn;
     //Destinations
@@ -93,7 +102,11 @@ public class Nc implements Initializable {
         //Notifi Table
         notificationTableColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("oid"));
         objectNameColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("name"));
+        objectNameColumn.setEditable(true);
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("description"));
+        prioToOffNormalColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("prioToOffNormal"));
+        prioToFaultColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("prioToFault"));
+        prioToNormalColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("prioToNormal"));
         notificationClassColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("notificationClass"));
 
         recipientListColumn.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
@@ -104,8 +117,9 @@ public class Nc implements Initializable {
                 return new TableCell<>() {
                     final Button button = new Button();
                     {
-                        button.setMinWidth(80);
-                        button.setText("Empfänger");
+                        Image imageDesti = new Image(getClass().getResourceAsStream("/com.virusapp/destiMenu.png"));
+                        button.setMinWidth(15);
+                        button.setGraphic(new ImageView(imageDesti));
                     }
                     @Override
                     public void updateItem(NotificationClassObject notificationClassObject, boolean empty) {
@@ -119,19 +133,18 @@ public class Nc implements Initializable {
                 };
             }
         });
-
         notifiTableView.setItems(obsListNCobjects);
-
     }
-
 
     private void loadDestinationObjects(NotificationClassObject notificationClassObject){
         List<DestinationObject> destinations = notificationClassObject.getRecipientList();
         obsListDestinations = FXCollections.observableArrayList(destinations);
+        DestinationListController destinationListController = new DestinationListController(obsListDestinations);
+
        for (DestinationObject destinationObject : obsListDestinations) {
            System.out.println("destis =");
            System.out.println(destinationObject.getDeviceID());
-           System.out.println(destinationObject.getProcessIdentifierINT());
+           System.out.println(destinationObject.getProcessIdentifierID());
            System.out.println("*******************************");
 
        }
@@ -140,6 +153,8 @@ public class Nc implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     loadRemoteDevices();
+
+    writeToDevice.setOnAction(event -> Main.ownDevice.deleteDestinationOnAllNC(145001));
 
 
 

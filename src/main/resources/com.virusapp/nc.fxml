@@ -13,9 +13,9 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <BorderPane prefHeight="600.0" prefWidth="1000.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane prefHeight="600.0" prefWidth="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-0.0" AnchorPane.topAnchor="0.0">
          <top>
             <MenuBar BorderPane.alignment="CENTER">
               <menus>
@@ -52,7 +52,10 @@
                   <TableColumn fx:id="objectNameColumn" prefWidth="131.0" text="Name" />
                   <TableColumn fx:id="descriptionColumn" prefWidth="125.0" text="Beschreibung" />
                   <TableColumn fx:id="notificationClassColumn" prefWidth="125.0" text="Notification Class" />
-                  <TableColumn fx:id="recipientListColumn" prefWidth="200.0" text="Empfängerliste" />
+                  <TableColumn fx:id="prioToOffNormalColumn" prefWidth="90.0" text="To Off Normal" />
+                  <TableColumn fx:id="prioToFaultColumn" prefWidth="90.0" text="To Fault" />
+                  <TableColumn fx:id="prioToNormalColumn" prefWidth="90.0" text="To Normal" />
+                  <TableColumn fx:id="recipientListColumn" prefWidth="40.0" text="" />
               </columns>
             </TableView>
          </center>
