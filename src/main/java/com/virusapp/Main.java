@@ -33,7 +33,7 @@ public class Main extends Application {
         ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
         ipNetworkBuilder.withBroadcast("255.255.255.255",IpNetwork.BVLC_TYPE);
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
-        ownDevice = new OwnDevice(145001,defaultTransport);
+        ownDevice = new OwnDevice(1000009,defaultTransport);
         ownDevice.createLocalDevice();
 
 

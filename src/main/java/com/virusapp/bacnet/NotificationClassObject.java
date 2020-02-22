@@ -75,7 +75,7 @@ public class NotificationClassObject extends RemoteObject {
                             Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
             for (Destination destination : destinations){
-            DestinationObject destinationObject = new DestinationObject(destination);
+            DestinationObject destinationObject = new DestinationObject(destination,this);
             recipientList.add(destinationObject);
             }
         } catch (BACnetException e) {
@@ -106,15 +106,6 @@ public class NotificationClassObject extends RemoteObject {
                     PropertyIdentifier.priority,new UnsignedInteger(3)).toString());
         } catch (BACnetException e){
             System.err.println("Could not read priority of:" + super.getObjectIdentifier());
-        }
-    }
-
-    //TODO Test effect of property array Index
-    public void writeDestination(Destination destination, UnsignedInteger propertyArrayIndex)  {
-        try {
-            RequestUtils.writeProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),PropertyIdentifier.recipientList,propertyArrayIndex);
-        } catch (BACnetException e) {
-            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + super.getObjectIdentifier() + " on " + bacnetDevice.getBacNetDeviceInfo().getName());
         }
     }
 
