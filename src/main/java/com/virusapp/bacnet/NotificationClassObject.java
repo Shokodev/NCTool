@@ -10,6 +10,8 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -26,7 +28,7 @@ public class NotificationClassObject extends RemoteObject {
 
     //backend
     private BACnetDevice bacnetDevice;
-    private List<DestinationObject> recipientList = new LinkedList<>();
+    private ObservableList<DestinationObject> recipientList  = FXCollections.observableArrayList();
 
 
     //frontend
