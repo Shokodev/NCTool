@@ -3,6 +3,8 @@ package com.virusapp.bacnet;
 import com.serotonin.bacnet4j.RemoteDevice;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Button;
 
 import javax.swing.*;
@@ -12,7 +14,7 @@ import java.util.List;
 
 public class BACnetDevice  {
 
-    public List<NotificationClassObject> notificationClassObjects = new LinkedList<>();
+    public ObservableList<NotificationClassObject> notificationClassObjects = FXCollections.observableArrayList();
     public RemoteDevice bacNetDeviceInfo;
 
 
@@ -20,7 +22,7 @@ public class BACnetDevice  {
         this.bacNetDeviceInfo = bacNetDeviceInfo;
     }
 
-    public List<NotificationClassObject> getNotificationClassObjects() {
+    public ObservableList<NotificationClassObject> getNotificationClassObjects() {
         return notificationClassObjects;
     }
 

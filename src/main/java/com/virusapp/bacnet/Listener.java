@@ -9,6 +9,7 @@ import com.serotonin.bacnet4j.type.constructed.SequenceOf;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.virusapp.Main;
+import javafx.collections.FXCollections;
 
 public class Listener extends DeviceEventAdapter {
 
@@ -18,13 +19,4 @@ public class Listener extends DeviceEventAdapter {
         Main.ownDevice.getBacnetDevices().add(bacnetDevice);
     }
 
-    @Override
-    public void covNotificationReceived(UnsignedInteger subscriberProcessIdentifier, ObjectIdentifier initiatingDeviceIdentifier, ObjectIdentifier monitoredObjectIdentifier, UnsignedInteger timeRemaining, SequenceOf<PropertyValue> listOfValues) {
-        System.out.println(" cov");
-    }
-
-    @Override
-    public void propertyWritten(Address from, BACnetObject obj, PropertyValue pv) {
-        System.out.println("Property " + pv + " written on: " + obj.getObjectName());
-    }
 }

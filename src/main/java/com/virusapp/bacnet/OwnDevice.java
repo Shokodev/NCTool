@@ -12,10 +12,11 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -26,7 +27,7 @@ import java.util.List;
  *  of this license document, but changing it is not allowed.
  */
 public class OwnDevice extends LocalDevice {
-    private List<BACnetDevice> bacnetDevicesDevices = new LinkedList<>();
+    private ObservableList<BACnetDevice> bacnetDevices = FXCollections.observableArrayList();
     static final Logger LOG = LoggerFactory.getLogger(OwnDevice.class);
 
     public OwnDevice(int deviceNumber, Transport transport) {
@@ -83,8 +84,8 @@ public class OwnDevice extends LocalDevice {
         return true;
     }
 
-    public List<BACnetDevice> getBacnetDevices() {
-        return bacnetDevicesDevices;
+    public ObservableList<BACnetDevice> getBacnetDevices() {
+        return bacnetDevices;
     }
 
     /**
