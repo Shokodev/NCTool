@@ -17,7 +17,6 @@ public class BACnetDevice  {
     public ObservableList<NotificationClassObject> notificationClassObjects = FXCollections.observableArrayList();
     public RemoteDevice bacNetDeviceInfo;
 
-
     public BACnetDevice(RemoteDevice bacNetDeviceInfo) {
         this.bacNetDeviceInfo = bacNetDeviceInfo;
     }

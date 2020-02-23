@@ -34,7 +34,7 @@ class DestinationListController implements Initializable {
     private TableColumn<DestinationObject, String> recipientColumn;
 
 
-    DestinationListController(ObservableList destinationObject) {
+    DestinationListController(ObservableList<DestinationObject> destinationObject) {
         loadRecipients();
         loadRecipientsIntoTableView(destinationObject);
     }
@@ -70,6 +70,8 @@ class DestinationListController implements Initializable {
         processIdColumn.setCellFactory(cellFactory);
         processIdColumn.setEditable(true);
         recipientColumn.setCellValueFactory(new PropertyValueFactory<DestinationObject, String>("deviceID"));
+        recipientColumn.setCellFactory(cellFactory);
+        recipientColumn.setEditable(true);
 
         destinationLisTableView.setItems(destinationObject);
         destinationLisTableView.getColumns().addAll(processIdColumn, recipientColumn);

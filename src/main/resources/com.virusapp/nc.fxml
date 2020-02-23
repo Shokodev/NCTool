@@ -62,7 +62,9 @@
          <bottom>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
-                <Button mnemonicParsing="false" text="Löschen" translateX="-190.0" />
+                <Button fx:id="deleteButton" mnemonicParsing="false" text="Löschen" translateX="-190.0" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Empfänger löschen" />
+                  <TextField fx:id="instanceNumberDelete" />
                   <Button fx:id="writeToDevice" layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Desigo CC" />
                   <TextField fx:id="instanceNumber" />

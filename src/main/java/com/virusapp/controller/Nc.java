@@ -19,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 
 import java.net.URL;
+import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -33,7 +34,13 @@ public class Nc implements Initializable {
     @FXML
     private TextField instanceNumber;
     @FXML
+    private TextField instanceNumberDelete;
+
+    @FXML
     private Button writeToDevice;
+    @FXML
+    private Button deleteButton;
+
     //Devices
     @FXML
     private TableView<BACnetDevice> remoteDeviceTableView;
@@ -65,22 +72,13 @@ public class Nc implements Initializable {
 
 
 
-    private ObservableList<BACnetDevice> obsListRemoteDevices;
-
-    private ObservableList<NotificationClassObject> obsListNCobjects;
-
-    private ObservableList<DestinationObject> obsListDestinations;
-
-
     private void loadRemoteDevices() {
         try{
-            List<BACnetDevice> bacnetDevices = ownDeviceModel.getBacnetDevices();
-            obsListRemoteDevices = FXCollections.observableArrayList(bacnetDevices);
 
             deviceNameColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("device"));
             idColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("id"));
 
-            remoteDeviceTableView.setItems(obsListRemoteDevices);
+            remoteDeviceTableView.setItems(ownDeviceModel.getBacnetDevices());
             remoteDeviceTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -97,8 +95,6 @@ public class Nc implements Initializable {
     private void loadNotificationClassObjects(BACnetDevice baCnetDevice) {
         final Button btn = new Button("load");
 
-        List<NotificationClassObject> notis = baCnetDevice.notificationClassObjects;
-        obsListNCobjects = FXCollections.observableArrayList(notis);
         //Notifi Table
         notificationTableColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("oid"));
         objectNameColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("name"));
@@ -133,31 +129,33 @@ public class Nc implements Initializable {
                 };
             }
         });
-        notifiTableView.setItems(obsListNCobjects);
+
+        notifiTableView.setItems(baCnetDevice.getNotificationClassObjects());
     }
 
     private void loadDestinationObjects(NotificationClassObject notificationClassObject){
-        List<DestinationObject> destinations = notificationClassObject.getRecipientList();
-        obsListDestinations = FXCollections.observableArrayList(destinations);
-        DestinationListController destinationListController = new DestinationListController(obsListDestinations);
-
-       for (DestinationObject destinationObject : obsListDestinations) {
-           System.out.println("destis =");
-           System.out.println(destinationObject.getDeviceID());
-           System.out.println(destinationObject.getProcessIdentifierID());
-           System.out.println("*******************************");
-
-       }
+           DestinationListController destinationListController = new DestinationListController(notificationClassObject.getRecipientList());
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     loadRemoteDevices();
+    try{
+        writeToDevice.setOnAction(event -> onWriteButtonAction());
+    }catch (IllegalFormatException e){
+        System.out.println(e);
+    }
+    deleteButton.setOnAction(event -> onDeleteButtonAction());
 
-    writeToDevice.setOnAction(event -> Main.ownDevice.deleteDestinationOnAllNC(145001));
+    }
 
+    public void onDeleteButtonAction(){
+        Main.ownDevice.deleteDestinationOnAllNC(Integer.parseInt(instanceNumberDelete.getText()));
+        this.notifiTableView.refresh();
+    }
 
-
-
+    public void onWriteButtonAction(){
+        ownDeviceModel.sendNewDestinationToAllNC(Integer.parseInt(instanceNumber.getText()));
+        this.notifiTableView.refresh();
     }
 }

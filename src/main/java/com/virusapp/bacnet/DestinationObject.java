@@ -38,26 +38,27 @@ public class DestinationObject {
         return processIdentifierID;
     }
 
-
     public void writeDestination(Integer deviceID)  {
         Recipient recipient = new Recipient(new ObjectIdentifier(ObjectType.device,deviceID));
         Destination destination = new Destination(recipient,new UnsignedInteger(Integer.parseInt(processIdentifierID)), Boolean.TRUE,new EventTransitionBits(true,true,true));
-        try {
-            RequestUtils.writeProperty(Main.ownDevice, noti.getBacnetDevice().bacNetDeviceInfo,noti.getObjectIdentifier(), PropertyIdentifier.recipientList,destination,8);
-            Main.ownDevice.updateAfterPropertyWritten();
-        } catch (BACnetException e) {
-            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + noti.getObjectIdentifier() + " on " + noti.getBacnetDevice().bacNetDeviceInfo.getName());
-        }
+        sendWriteRequest(destination);
     }
 
     public void writeProcessIdentifier(Integer processIdentifier)  {
         Destination destination = new Destination(this.destination.getRecipient(),new UnsignedInteger(processIdentifier), Boolean.TRUE,new EventTransitionBits(true,true,true));
+        sendWriteRequest(destination);
+    }
+
+    public void sendWriteRequest(Destination destination){
         try {
-            RequestUtils.writeProperty(Main.ownDevice, noti.getBacnetDevice().bacNetDeviceInfo,noti.getObjectIdentifier(), PropertyIdentifier.recipientList,destination,8);
-            Main.ownDevice.updateAfterPropertyWritten();
+            RequestUtils.writeProperty(Main.ownDevice,noti.getBacnetDevice().getBacNetDeviceInfo(),noti.getObjectIdentifier(),PropertyIdentifier.recipientList,destination,8);
         } catch (BACnetException e) {
             System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + noti.getObjectIdentifier() + " on " + noti.getBacnetDevice().bacNetDeviceInfo.getName());
         }
     }
 
+
+    public Destination getDestination() {
+        return destination;
+    }
 }

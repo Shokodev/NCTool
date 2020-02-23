@@ -8,7 +8,6 @@ import com.serotonin.bacnet4j.type.constructed.*;
 import com.serotonin.bacnet4j.type.enumerated.ObjectType;
 import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.Boolean;
-import com.serotonin.bacnet4j.type.primitive.Null;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
@@ -57,6 +56,7 @@ public class OwnDevice extends LocalDevice {
      * Send WhoIs request to the BACnet network
      */
     private void scanForRemoteDevices() {
+        getBacnetDevices().clear();
         System.out.println("Scan for remote devices.........");
         try {
             WhoIsRequest request = new WhoIsRequest();
@@ -120,7 +120,6 @@ public class OwnDevice extends LocalDevice {
     }
 
     public void updateAfterPropertyWritten() {
-        scanForRemoteDevices();
         scanAndAddAllNCObjects();
     }
 
@@ -129,38 +128,40 @@ public class OwnDevice extends LocalDevice {
             for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
                 Recipient recipient = new Recipient(new ObjectIdentifier(ObjectType.device, deviceID));
                 Destination destination = new Destination(recipient, new UnsignedInteger(1), Boolean.TRUE, new EventTransitionBits(true, true, true));
-                try {
-                    RequestUtils.writeProperty(Main.ownDevice, notificationClassObject.getBacnetDevice().bacNetDeviceInfo, notificationClassObject.getObjectIdentifier(), PropertyIdentifier.recipientList, destination, 8);
-                    Main.ownDevice.updateAfterPropertyWritten();
-                } catch (BACnetException e) {
-                    System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + notificationClassObject.getObjectIdentifier() + " on " + notificationClassObject.getBacnetDevice().bacNetDeviceInfo.getName());
-                }
+                sendAddDestinationRequest(destination,notificationClassObject);
             }
-
-
         }
-
+        updateAfterPropertyWritten();
     }
 
     public void deleteDestinationOnAllNC(Integer deviceID) {
         for (BACnetDevice bacnetDevice : getBacnetDevices()) {
             for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
                 for (DestinationObject destinationObject : notificationClassObject.getRecipientList()) {
-                    if (destinationObject.getProcessIdentifierID().equals(deviceID)) {
-                        destinationObject.writeDestination(null);
-                        destinationObject.writeProcessIdentifier(null);
+                    if (destinationObject.getDeviceID().equals(String.valueOf(deviceID))) {
+                        try {
+                            RequestUtils.removeListElement(this,bacnetDevice.getBacNetDeviceInfo(),notificationClassObject.getObjectIdentifier(),PropertyIdentifier.recipientList,destinationObject.getDestination());
+                        } catch (BACnetException e) {
+                           System.out.println("Could not delete " + destinationObject.getDeviceID() + " at " + notificationClassObject);
+                        }
                     }
                 }
             }
             System.out.println("Deleted");
-            updateAfterPropertyWritten();
+
         }
+        updateAfterPropertyWritten();
     }
+
     /**
      * Reads all BACnet Objects of all remote devises
     */
     private void scanAndAddAllNCObjects(){
         for (BACnetDevice bacnetDevice : getBacnetDevices()) {
+            for(NotificationClassObject noti : bacnetDevice.getNotificationClassObjects()){
+                noti.getRecipientList().clear();
+            }
+            bacnetDevice.getNotificationClassObjects().clear();
             try {
                 List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
                         RequestUtils.sendReadPropertyAllowNull(
@@ -181,4 +182,13 @@ public class OwnDevice extends LocalDevice {
         }
     }
 
-}
+    public void sendAddDestinationRequest(Destination destination, NotificationClassObject notificationClassObject){
+        try {
+                RequestUtils.addListElement(this,notificationClassObject.getBacnetDevice().getBacNetDeviceInfo(),notificationClassObject.getObjectIdentifier(),PropertyIdentifier.recipientList,destination);
+        } catch (BACnetException e) {
+            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + notificationClassObject.getObjectIdentifier() + " on " + notificationClassObject.getBacnetDevice().bacNetDeviceInfo.getName());
+        }
+    }
+
+    }
+

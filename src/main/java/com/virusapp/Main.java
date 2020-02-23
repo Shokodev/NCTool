@@ -7,10 +7,13 @@ import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.virusapp.bacnet.OwnDevice;
 import com.virusapp.controller.Nc;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +39,6 @@ public class Main extends Application {
         ownDevice = new OwnDevice(1000009,defaultTransport);
         ownDevice.createLocalDevice();
 
-
-
         //FXML start
         try {
             scene = new Scene(loadFXML("Nc"));
@@ -47,6 +48,17 @@ public class Main extends Application {
         }
         stage.setScene(scene);
         stage.show();
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent windowEvent) {
+                try {
+                    Platform.exit();
+                    System.exit(0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private static Parent loadFXML(String fxml) throws Exception {
@@ -56,7 +68,4 @@ public class Main extends Application {
         return fxmlLoader.load();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

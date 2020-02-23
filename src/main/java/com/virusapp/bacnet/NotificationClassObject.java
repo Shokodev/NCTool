@@ -42,6 +42,7 @@ public class NotificationClassObject extends RemoteObject {
     public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
         super(Main.ownDevice, oid);
         this.bacnetDevice = bacnetDevice;
+        recipientList.clear();
         readPriority();
         readDestinations();
         this.name = getObjectName();
@@ -65,13 +66,12 @@ public class NotificationClassObject extends RemoteObject {
         return bacnetDevice;
     }
 
-    public List<DestinationObject> getRecipientList() {
+    public ObservableList<DestinationObject> getRecipientList() {
         return recipientList;
     }
 
     private void readDestinations(){
         try {
-            recipientList.clear();
             List<Destination> destinations = ((SequenceOf<Destination>)
                     RequestUtils.sendReadPropertyAllowNull(
                             Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
