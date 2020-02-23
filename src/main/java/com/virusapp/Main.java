@@ -4,7 +4,7 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.virusapp.bacnet.OwnDevice;
-import com.virusapp.controller.Nc;
+import com.virusapp.controller.NCcontroller;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -30,7 +30,7 @@ public class Main extends Application {
     private static Scene scene;
 
     private static Parent loadFXML(String fxml) throws Exception {
-        Nc ncController = new Nc(ownDevice);
+        NCcontroller ncController = new NCcontroller(ownDevice);
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.virusapp/" + fxml + ".fxml"));
         fxmlLoader.setController(ncController);
         return fxmlLoader.load();
@@ -41,13 +41,14 @@ public class Main extends Application {
         IpNetworkBuilder ipNetworkBuilder = new IpNetworkBuilder();
         ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
         ipNetworkBuilder.withBroadcast("255.255.255.255", IpNetwork.BVLC_TYPE);
+        ipNetworkBuilder.withPort(47808);
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
         ownDevice = new OwnDevice(1000009, defaultTransport);
         ownDevice.createLocalDevice();
 
         //FXML start
         try {
-            scene = new Scene(loadFXML("Nc"));
+            scene = new Scene(loadFXML("NCcontroller"));
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("Cant load scene");

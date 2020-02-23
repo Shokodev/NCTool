@@ -12,8 +12,10 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
+import com.virusapp.application.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +82,7 @@ public class OwnDevice extends LocalDevice {
     private boolean alertNoDeviceFound() {
         if (getBacnetDevices().isEmpty()) {
             System.err.println("No remote devices found");
+            AlertHelper.showAlert(Alert.AlertType.WARNING,"Achtung!","Keine Geräte gefunden!");
             return false;
         }
         return true;

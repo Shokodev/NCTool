@@ -1,5 +1,6 @@
 package com.virusapp.controller;
 
+import com.virusapp.application.AlertHelper;
 import com.virusapp.bacnet.DestinationObject;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -72,15 +73,7 @@ public class EditingCell extends TableCell<DestinationObject, String> {
 
     private void createTextField() {
         textField = new TextField(String.valueOf(getItem()));
-        textField.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observable, String oldValue,
-                                String newValue) {
-                if (!newValue.matches("\\d*")) {
-                    textField.setText(newValue.replaceAll("[^\\d]", ""));
-                }
-            }
-        });
+        AlertHelper.denyString(textField);
 
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(new EventHandler<KeyEvent>() {

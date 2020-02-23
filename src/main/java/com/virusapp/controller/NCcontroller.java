@@ -1,21 +1,26 @@
 package com.virusapp.controller;
 
 import com.virusapp.Main;
+import com.virusapp.application.AlertHelper;
 import com.virusapp.bacnet.BACnetDevice;
 import com.virusapp.bacnet.DestinationObject;
 import com.virusapp.bacnet.NotificationClassObject;
 import com.virusapp.bacnet.OwnDevice;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Window;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -23,11 +28,11 @@ import java.util.IllegalFormatException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class Nc implements Initializable {
+public class NCcontroller implements Initializable {
 
     private OwnDevice ownDeviceModel;
 
-    public Nc(OwnDevice model) {
+    public NCcontroller(OwnDevice model) {
         this.ownDeviceModel = model;
     }
 
@@ -140,22 +145,22 @@ public class Nc implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     loadRemoteDevices();
-    try{
-        writeToDevice.setOnAction(event -> onWriteButtonAction());
-    }catch (IllegalFormatException e){
-        System.out.println(e);
-    }
+    AlertHelper.denyString(instanceNumberDelete);
+    AlertHelper.denyString(instanceNumber);
+    writeToDevice.setOnAction(event -> onWriteButtonAction());
     deleteButton.setOnAction(event -> onDeleteButtonAction());
-
     }
 
     public void onDeleteButtonAction(){
-        Main.ownDevice.deleteDestinationOnAllNC(Integer.parseInt(instanceNumberDelete.getText()));
+        if(AlertHelper.showAlert(Alert.AlertType.CONFIRMATION,deleteButton.getScene().getWindow(),"Löschen Bestätigen","Wollen Sie wirklich alle Einträgen vom Empfänger " + instanceNumberDelete.getText() + "\n auf allen NC Objekten in allen Kontrollern löschen?"))
+        {Main.ownDevice.deleteDestinationOnAllNC(Integer.parseInt(instanceNumberDelete.getText()));}
         this.notifiTableView.refresh();
     }
 
     public void onWriteButtonAction(){
-        ownDeviceModel.sendNewDestinationToAllNC(Integer.parseInt(instanceNumber.getText()));
+        if(AlertHelper.showAlert(Alert.AlertType.CONFIRMATION,writeToDevice.getScene().getWindow(),"Bestätigen","Wollen Sie wirklich folgenden Empfänger " + instanceNumber.getText() + "\n auf allen NC Objekten in allen Kontrollern eintragen?"))
+        { ownDeviceModel.sendNewDestinationToAllNC(Integer.parseInt(instanceNumber.getText()));}
         this.notifiTableView.refresh();
     }
+
 }
