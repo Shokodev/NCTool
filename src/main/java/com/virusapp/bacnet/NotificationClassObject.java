@@ -9,26 +9,23 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.Main;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
  * @Version 1.0
  * @Author Andreas Vogt, Daniel Reiter & Rafael Grimm
  * @LICENCE Copyright (C)
- *  Everyone is permitted to copy and distribute verbatim copies
- *  of this license document, but changing it is not allowed.
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
  */
 public class NotificationClassObject extends RemoteObject {
 
     //backend
     private BACnetDevice bacnetDevice;
-    private ObservableList<DestinationObject> recipientList  = FXCollections.observableArrayList();
+    private ObservableList<DestinationObject> recipientList = FXCollections.observableArrayList();
 
 
     //frontend
@@ -55,7 +52,7 @@ public class NotificationClassObject extends RemoteObject {
     @Override
     public String getObjectName() {
         try {
-            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),PropertyIdentifier.objectName,null).toString();
+            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), PropertyIdentifier.objectName, null).toString();
         } catch (BACnetException e) {
             System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
         }
@@ -70,43 +67,43 @@ public class NotificationClassObject extends RemoteObject {
         return recipientList;
     }
 
-    private void readDestinations(){
+    private void readDestinations() {
         try {
             List<Destination> destinations = ((SequenceOf<Destination>)
                     RequestUtils.sendReadPropertyAllowNull(
                             Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
-            for (Destination destination : destinations){
-            DestinationObject destinationObject = new DestinationObject(destination,this);
-            recipientList.add(destinationObject);
+            for (Destination destination : destinations) {
+                DestinationObject destinationObject = new DestinationObject(destination, this);
+                recipientList.add(destinationObject);
             }
         } catch (BACnetException e) {
             System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
         }
     }
 
-    private String readProperty(PropertyIdentifier propertyIdentifier){
+    private String readProperty(PropertyIdentifier propertyIdentifier) {
         try {
-            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),propertyIdentifier,null).toString();
+            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), propertyIdentifier, null).toString();
         } catch (BACnetException e) {
             System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
         }
         return "COM";
     }
 
-    private void readPriority(){
+    private void readPriority() {
         try {
             // Index is setteld by BACnet
             this.prioToOffNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
-                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
-                    PropertyIdentifier.priority,new UnsignedInteger(1)).toString());
+                    bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
+                    PropertyIdentifier.priority, new UnsignedInteger(1)).toString());
             this.prioToFault = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
-                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
-                    PropertyIdentifier.priority,new UnsignedInteger(2)).toString());
+                    bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
+                    PropertyIdentifier.priority, new UnsignedInteger(2)).toString());
             this.prioToNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
-                    bacnetDevice.getBacNetDeviceInfo(),super.getObjectIdentifier(),
-                    PropertyIdentifier.priority,new UnsignedInteger(3)).toString());
-        } catch (BACnetException e){
+                    bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
+                    PropertyIdentifier.priority, new UnsignedInteger(3)).toString());
+        } catch (BACnetException e) {
             System.err.println("Could not read priority of:" + super.getObjectIdentifier());
         }
     }

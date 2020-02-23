@@ -1,6 +1,5 @@
 package com.virusapp;
 
-import com.serotonin.bacnet4j.LocalDevice;
 import com.serotonin.bacnet4j.npdu.ip.IpNetwork;
 import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
@@ -21,22 +20,29 @@ import org.slf4j.LoggerFactory;
  * @Version 1.0
  * @Author Andreas Vogt, Daniel Reiter & Rafael Grimm
  * @LICENCE Copyright (C)
- *  Everyone is permitted to copy and distribute verbatim copies
- *  of this license document, but changing it is not allowed.
+ * Everyone is permitted to copy and distribute verbatim copies
+ * of this license document, but changing it is not allowed.
  */
 public class Main extends Application {
 
+    static final Logger LOG = LoggerFactory.getLogger(Main.class);
     public static OwnDevice ownDevice;
     private static Scene scene;
-    static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
+    private static Parent loadFXML(String fxml) throws Exception {
+        Nc ncController = new Nc(ownDevice);
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.virusapp/" + fxml + ".fxml"));
+        fxmlLoader.setController(ncController);
+        return fxmlLoader.load();
+    }
 
     @Override
     public void start(Stage stage) {
         IpNetworkBuilder ipNetworkBuilder = new IpNetworkBuilder();
         ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
-        ipNetworkBuilder.withBroadcast("255.255.255.255",IpNetwork.BVLC_TYPE);
+        ipNetworkBuilder.withBroadcast("255.255.255.255", IpNetwork.BVLC_TYPE);
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
-        ownDevice = new OwnDevice(1000009,defaultTransport);
+        ownDevice = new OwnDevice(1000009, defaultTransport);
         ownDevice.createLocalDevice();
 
         //FXML start
@@ -59,13 +65,6 @@ public class Main extends Application {
                 }
             }
         });
-    }
-
-    private static Parent loadFXML(String fxml) throws Exception {
-        Nc ncController = new Nc(ownDevice);
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.virusapp/" + fxml +".fxml"));
-        fxmlLoader.setController(ncController);
-        return fxmlLoader.load();
     }
 
 }
