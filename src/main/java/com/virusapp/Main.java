@@ -45,6 +45,7 @@ public class Main extends Application {
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
         ownDevice = new OwnDevice(1000009, defaultTransport);
         ownDevice.createLocalDevice();
+        LOG.debug("Device created " + System.currentTimeMillis());
 
         //FXML start
         try {
