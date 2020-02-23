@@ -42,7 +42,7 @@ class DestinationListController implements Initializable {
     private void loadRecipients() {
         try {
             Stage stage = new Stage();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com.virusapp/destinationList.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/destinationList.fxml"));
             loader.setController(this);
             Pane root = loader.load();
             Scene scene = new Scene(root);

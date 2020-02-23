@@ -31,7 +31,7 @@ public class Main extends Application {
 
     private static Parent loadFXML(String fxml) throws Exception {
         NCcontroller ncController = new NCcontroller(ownDevice);
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/com.virusapp/" + fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/" + fxml + ".fxml"));
         fxmlLoader.setController(ncController);
         return fxmlLoader.load();
     }
