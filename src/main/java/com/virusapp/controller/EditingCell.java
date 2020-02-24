@@ -74,13 +74,13 @@ public class EditingCell extends TableCell<DestinationObject, String> {
     private void createTextField() {
         textField = new TextField(String.valueOf(getItem()));
         AlertHelper.denyString(textField);
-
         textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
         textField.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
                 if (t.getCode() == KeyCode.ENTER) {
                     commitEdit(textField.getText());
+
                 } else if (t.getCode() == KeyCode.ESCAPE) {
                     cancelEdit();
                 } else if (t.getCode() == KeyCode.TAB) {
