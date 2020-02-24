@@ -8,15 +8,9 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="252.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <bottom>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-        <buttons>
-          <Button mnemonicParsing="false" text="Button" />
-        </buttons>
-      </ButtonBar>
    </bottom>
    <center>
       <TableView fx:id="destinationLisTableView" prefHeight="200.0" prefWidth="658.0" BorderPane.alignment="CENTER">
-
       </TableView>
    </center>
 </BorderPane>

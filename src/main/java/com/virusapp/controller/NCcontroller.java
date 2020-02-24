@@ -118,7 +118,7 @@ public class NCcontroller implements Initializable {
                 return new TableCell<>() {
                     final Button button = new Button();
                     {
-                        Image imageDesti = new Image(getClass().getResourceAsStream("/com.virusapp/destiMenu.png"));
+                        Image imageDesti = new Image(getClass().getResourceAsStream("/view/destiMenu.png"));
                         button.setMinWidth(15);
                         button.setGraphic(new ImageView(imageDesti));
                     }
