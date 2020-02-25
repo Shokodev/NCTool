@@ -29,9 +29,9 @@ class DestinationListController implements Initializable {
     private TableColumn<DestinationObject, String> recipientColumn;
 
 
-    DestinationListController(ObservableList<DestinationObject> destinationObject) {
+    DestinationListController(ObservableList<DestinationObject> destinationObjects) {
         loadRecipients();
-        loadRecipientsIntoTableView(destinationObject);
+        loadRecipientsIntoTableView(destinationObjects);
     }
 
     private void loadRecipients() {
@@ -49,7 +49,7 @@ class DestinationListController implements Initializable {
         }
     }
 
-    private void loadRecipientsIntoTableView(ObservableList destinationObject) {
+    private void loadRecipientsIntoTableView(ObservableList<DestinationObject> destinationObjects) {
 
         Callback<TableColumn, TableCell> cellFactory = new Callback<TableColumn, TableCell>() {
             @Override
@@ -68,7 +68,7 @@ class DestinationListController implements Initializable {
         recipientColumn.setCellFactory(cellFactory);
         recipientColumn.setEditable(true);
 
-        destinationLisTableView.setItems(destinationObject);
+        destinationLisTableView.setItems(destinationObjects);
         destinationLisTableView.getColumns().addAll(processIdColumn, recipientColumn);
         destinationLisTableView.setEditable(true);
 
