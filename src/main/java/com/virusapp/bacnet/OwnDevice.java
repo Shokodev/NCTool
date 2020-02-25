@@ -11,7 +11,7 @@ import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
-import com.virusapp.Main;
+import com.virusapp.App;
 import com.virusapp.application.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -115,8 +115,8 @@ public class OwnDevice extends LocalDevice {
      * Reset local device if creating is called again in runtime
      */
     private void rebaseLocalDeviceIfExists() {
-        if (Main.ownDevice != null) {
-            Main.ownDevice.terminate();
+        if (App.ownDevice != null) {
+            App.ownDevice.terminate();
             System.err.println("*********************Reset*********************");
 
         }

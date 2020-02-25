@@ -23,15 +23,15 @@ import org.slf4j.LoggerFactory;
  * Everyone is permitted to copy and distribute verbatim copies
  * of this license document, but changing it is not allowed.
  */
-public class Main extends Application {
+public class App extends Application {
 
-    static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    static final Logger LOG = LoggerFactory.getLogger(App.class);
     public static OwnDevice ownDevice;
     private static Scene scene;
 
-    private static Parent loadFXML(String fxml) throws Exception {
+    private static Parent loadFXML() throws Exception {
         NCcontroller ncController = new NCcontroller(ownDevice);
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/view/" + fxml + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/NCcontroller.fxml"));
         fxmlLoader.setController(ncController);
         return fxmlLoader.load();
     }
@@ -49,7 +49,7 @@ public class Main extends Application {
 
         //FXML start
         try {
-            scene = new Scene(loadFXML("NCcontroller"));
+            scene = new Scene(loadFXML());
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("Cant load scene");
@@ -67,6 +67,10 @@ public class Main extends Application {
                 }
             }
         });
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
 }

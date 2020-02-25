@@ -8,7 +8,7 @@ import com.serotonin.bacnet4j.type.enumerated.PropertyIdentifier;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
-import com.virusapp.Main;
+import com.virusapp.App;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -37,7 +37,7 @@ public class NotificationClassObject extends RemoteObject {
     private Integer prioToNormal;
 
     public NotificationClassObject(ObjectIdentifier oid, BACnetDevice bacnetDevice) {
-        super(Main.ownDevice, oid);
+        super(App.ownDevice, oid);
         this.bacnetDevice = bacnetDevice;
         recipientList.clear();
         readPriority();
@@ -52,7 +52,7 @@ public class NotificationClassObject extends RemoteObject {
     @Override
     public String getObjectName() {
         try {
-            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), PropertyIdentifier.objectName, null).toString();
+            return RequestUtils.readProperty(App.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), PropertyIdentifier.objectName, null).toString();
         } catch (BACnetException e) {
             System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
         }
@@ -71,7 +71,7 @@ public class NotificationClassObject extends RemoteObject {
         try {
             List<Destination> destinations = ((SequenceOf<Destination>)
                     RequestUtils.sendReadPropertyAllowNull(
-                            Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
+                            App.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                             PropertyIdentifier.recipientList)).getValues();
             for (Destination destination : destinations) {
                 DestinationObject destinationObject = new DestinationObject(destination, this);
@@ -84,7 +84,7 @@ public class NotificationClassObject extends RemoteObject {
 
     private String readProperty(PropertyIdentifier propertyIdentifier) {
         try {
-            return RequestUtils.readProperty(Main.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), propertyIdentifier, null).toString();
+            return RequestUtils.readProperty(App.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), propertyIdentifier, null).toString();
         } catch (BACnetException e) {
             System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
         }
@@ -94,13 +94,13 @@ public class NotificationClassObject extends RemoteObject {
     private void readPriority() {
         try {
             // Index is setteld by BACnet
-            this.prioToOffNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+            this.prioToOffNormal = Integer.parseInt(RequestUtils.readProperty(App.ownDevice,
                     bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                     PropertyIdentifier.priority, new UnsignedInteger(1)).toString());
-            this.prioToFault = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+            this.prioToFault = Integer.parseInt(RequestUtils.readProperty(App.ownDevice,
                     bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                     PropertyIdentifier.priority, new UnsignedInteger(2)).toString());
-            this.prioToNormal = Integer.parseInt(RequestUtils.readProperty(Main.ownDevice,
+            this.prioToNormal = Integer.parseInt(RequestUtils.readProperty(App.ownDevice,
                     bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                     PropertyIdentifier.priority, new UnsignedInteger(3)).toString());
         } catch (BACnetException e) {

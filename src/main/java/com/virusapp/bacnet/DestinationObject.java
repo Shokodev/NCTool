@@ -11,7 +11,7 @@ import com.serotonin.bacnet4j.type.primitive.Boolean;
 import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
-import com.virusapp.Main;
+import com.virusapp.App;
 
 public class DestinationObject {
 
@@ -51,7 +51,7 @@ public class DestinationObject {
 
     public void sendWriteRequest(Destination destination){
         try {
-            RequestUtils.writeProperty(Main.ownDevice,noti.getBacnetDevice().getBacNetDeviceInfo(),noti.getObjectIdentifier(),PropertyIdentifier.recipientList,destination,8);
+            RequestUtils.writeProperty(App.ownDevice,noti.getBacnetDevice().getBacNetDeviceInfo(),noti.getObjectIdentifier(),PropertyIdentifier.recipientList,destination,8);
         } catch (BACnetException e) {
             System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + noti.getObjectIdentifier() + " on " + noti.getBacnetDevice().bacNetDeviceInfo.getName());
         }
