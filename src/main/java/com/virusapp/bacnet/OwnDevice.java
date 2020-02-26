@@ -108,6 +108,7 @@ public class OwnDevice extends LocalDevice {
                 e.printStackTrace();
             }
 
+
         }
     }
 

@@ -33,13 +33,6 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         loadStartView();
-
-        IpNetworkBuilder ipNetworkBuilder = new IpNetworkBuilder();
-        ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
-        ipNetworkBuilder.withBroadcast("255.255.255.255", IpNetwork.BVLC_TYPE);
-        ipNetworkBuilder.withPort(47808);
-        DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
-        ownDevice = new OwnDevice(1000009, defaultTransport);
         ownDevice.createLocalDevice();
         LOG.debug("Device created " + System.currentTimeMillis());
         loadNcView(stage);

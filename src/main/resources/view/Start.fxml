@@ -28,18 +28,18 @@
                <children>
                   <Label text="BACnet Port:" GridPane.halignment="CENTER" />
                   <Label layoutX="116.0" layoutY="129.0" text="Instanznummer:" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
-                  <ComboBox promptText="BACnet Port" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+                  <ComboBox fx:id="bacport" promptText="BACnet Port" GridPane.columnIndex="1" GridPane.halignment="CENTER">
                      <GridPane.margin>
                         <Insets left="20.0" right="20.0" />
                      </GridPane.margin>
                   </ComboBox>
-                  <TextField promptText="Instaznummer für das NC Tool eingeben" text="10999" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <TextField fx:id="deviceID" promptText="Instaznummer für das NC Tool eingeben" text="10999" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <GridPane.margin>
                         <Insets left="20.0" right="20.0" />
                      </GridPane.margin>
                   </TextField>
-                  <Button mnemonicParsing="false" text="Abbrechen" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                  <Button layoutX="66.0" layoutY="134.0" mnemonicParsing="false" text="OK" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Button fx:id="cancel" mnemonicParsing="false" text="Abbrechen" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
+                  <Button fx:id="ok" layoutX="66.0" layoutY="134.0" mnemonicParsing="false" text="OK" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
                </children>
             </GridPane>
          </children></AnchorPane>
