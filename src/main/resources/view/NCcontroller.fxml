@@ -6,6 +6,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
@@ -62,9 +64,12 @@
          <bottom>
             <ButtonBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <buttons>
-                <Button fx:id="deleteButton" mnemonicParsing="false" text="Löschen" translateX="-190.0" />
+                  <ProgressBar prefWidth="200.0" progress="0.0" />
+                  <Separator orientation="VERTICAL" prefHeight="40.0" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Empfänger löschen" />
+                <Button fx:id="deleteButton" mnemonicParsing="false" text="Löschen" />
                   <TextField fx:id="instanceNumberDelete" />
+                  <Separator orientation="VERTICAL" prefHeight="200.0" />
                   <Button fx:id="writeToDevice" layoutX="735.0" layoutY="18.0" mnemonicParsing="false" text="Einschreiben" />
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Instanznummer Desigo CC" />
                   <TextField fx:id="instanceNumber" />
