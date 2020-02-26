@@ -5,6 +5,7 @@ import com.serotonin.bacnet4j.npdu.ip.IpNetworkBuilder;
 import com.serotonin.bacnet4j.transport.DefaultTransport;
 import com.virusapp.bacnet.OwnDevice;
 import com.virusapp.controller.NCcontroller;
+import com.virusapp.controller.StartController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -27,17 +28,12 @@ public class App extends Application {
 
     static final Logger LOG = LoggerFactory.getLogger(App.class);
     public static OwnDevice ownDevice;
-    private static Scene scene;
 
-    private static Parent loadFXML() throws Exception {
-        NCcontroller ncController = new NCcontroller(ownDevice);
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/NCcontroller.fxml"));
-        fxmlLoader.setController(ncController);
-        return fxmlLoader.load();
-    }
 
     @Override
     public void start(Stage stage) {
+        loadStartView();
+
         IpNetworkBuilder ipNetworkBuilder = new IpNetworkBuilder();
         ipNetworkBuilder.withLocalBindAddress(IpNetwork.DEFAULT_BIND_IP);
         ipNetworkBuilder.withBroadcast("255.255.255.255", IpNetwork.BVLC_TYPE);
@@ -46,27 +42,49 @@ public class App extends Application {
         ownDevice = new OwnDevice(1000009, defaultTransport);
         ownDevice.createLocalDevice();
         LOG.debug("Device created " + System.currentTimeMillis());
+        loadNcView(stage);
+    }
 
-        //FXML start
+    private void loadStartView() {
         try {
-            scene = new Scene(loadFXML());
+            StartController startController = new StartController();
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/Start.fxml"));
+            fxmlLoader.setController(startController);
+            Scene scene = new Scene(fxmlLoader.load());
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.showAndWait();
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("Cant load scene");
         }
-        stage.setScene(scene);
-        stage.show();
-        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent windowEvent) {
-                try {
-                    Platform.exit();
-                    System.exit(0);
-                } catch (Exception e) {
-                    e.printStackTrace();
+    }
+
+    private void loadNcView(Stage stage) {
+
+        try {
+            NCcontroller ncController = new NCcontroller(ownDevice);
+            FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/NCcontroller.fxml"));
+            fxmlLoader.setController(ncController);
+            Scene scene = new Scene(fxmlLoader.load());
+            stage.setScene(scene);
+            stage.show();
+            stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent windowEvent) {
+                    try {
+                        Platform.exit();
+                        System.exit(0);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Cant load scene");
+        }
     }
 
     public static void main(String[] args) {
