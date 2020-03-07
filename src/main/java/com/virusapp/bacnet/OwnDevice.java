@@ -15,6 +15,7 @@ import com.virusapp.App;
 import com.virusapp.application.AlertHelper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.control.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ import java.util.List;
  */
 public class OwnDevice extends LocalDevice {
     private ObservableList<BACnetDevice> bacnetDevices = FXCollections.observableArrayList();
+    private ObservableMap<String,Integer> summedDestinationsIDs = FXCollections.observableHashMap();
     static final Logger LOG = LoggerFactory.getLogger(OwnDevice.class);
 
     public OwnDevice(int deviceNumber, Transport transport) {
@@ -112,6 +114,19 @@ public class OwnDevice extends LocalDevice {
         }
     }
 
+    public void setSummedDestinationsIDs(List<DestinationObject> destinations){
+        for(DestinationObject destination : destinations){
+            summedDestinationsIDs.put(destination.getDeviceID(),getCounterForSummedDestinationIDs(destination));
+        }
+    }
+
+    public Integer getCounterForSummedDestinationIDs(DestinationObject destinationObject){
+        if(summedDestinationsIDs.containsKey(destinationObject.getDeviceID())){
+           return summedDestinationsIDs.get(destinationObject.getDeviceID()) + 1;
+        }
+        return 1;
+    }
+
     /**
      * Reset local device if creating is called again in runtime
      */
@@ -177,10 +192,12 @@ public class OwnDevice extends LocalDevice {
                     bacnetDevice.getNotificationClassObjects().add(notificationClassObject);
                     System.out.println("NC: " + notificationClassObject.getObjectName()
                             + " added for device " + bacnetDevice.getBacNetDeviceInfo().getName());
+                    setSummedDestinationsIDs(notificationClassObject.getRecipientList());
 
+                        }
                     }
 
-                }} catch (BACnetException e) {
+                } catch (BACnetException e) {
                 System.err.println("Failed to read objects");
             }
         }
