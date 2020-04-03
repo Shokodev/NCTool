@@ -43,17 +43,13 @@ public class OwnDevice extends LocalDevice {
         getEventHandler().addListener(listener);
         try {
             initialize();
+            System.out.println("Successfully created LocalDevice " + getInstanceNumber());
+            LOG.debug("Successfully created LocalDevice " + getInstanceNumber());
         } catch (Exception e) {
             System.err.println("LocalDevice initialize failed, restart the application may solve this problem");
             LOG.error("LocalDevice initialize failed, restart the application may solve this problem");
         }
-        System.out.println("Successfully created LocalDevice " + getInstanceNumber());
-        LOG.debug("Successfully created LocalDevice " + getInstanceNumber());
         scanForRemoteDevices();
-        getRemoteDeviceInformation();
-        scanAndAddAllNCObjects();
-
-
     }
 
     /**
@@ -97,21 +93,18 @@ public class OwnDevice extends LocalDevice {
     /**
      * Reads and save more information about each remote device
      */
-    private void getRemoteDeviceInformation() {
-
-        for (BACnetDevice bacnetDevice : getBacnetDevices()) {
+    public void getRemoteDeviceInformation(BACnetDevice bacnetDevice) {
             try {
                 bacnetDevice.getBacNetDeviceInfo().setDeviceProperty(PropertyIdentifier.objectName,
                         RequestUtils.readProperty(this, bacnetDevice.getBacNetDeviceInfo(),
                                 bacnetDevice.getBacNetDeviceInfo().getObjectIdentifier(),
                                 PropertyIdentifier.objectName, null));
-                System.out.println("Device " + bacnetDevice.getBacNetDeviceInfo().getName() + " discovered");
             } catch (BACnetException e) {
                 e.printStackTrace();
             }
 
 
-        }
+
     }
 
     public void setSummedDestinationsIDs(List<DestinationObject> destinations){
@@ -138,10 +131,6 @@ public class OwnDevice extends LocalDevice {
         }
     }
 
-    public void updateAfterPropertyWritten() {
-        scanAndAddAllNCObjects();
-    }
-
     public void sendNewDestinationToAllNC(Integer deviceID) {
         for (BACnetDevice bacnetDevice : getBacnetDevices()) {
             for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
@@ -149,57 +138,55 @@ public class OwnDevice extends LocalDevice {
                 Destination destination = new Destination(recipient, new UnsignedInteger(1), Boolean.TRUE, new EventTransitionBits(true, true, true));
                 sendAddDestinationRequest(destination,notificationClassObject);
             }
+            scanAndAddAllNCObjects(bacnetDevice);
         }
-        updateAfterPropertyWritten();
+
     }
 
     public void deleteDestinationOnAllNC(Integer deviceID) {
         for (BACnetDevice bacnetDevice : getBacnetDevices()) {
-            for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
-                for (DestinationObject destinationObject : notificationClassObject.getRecipientList()) {
-                    if (destinationObject.getDeviceID().equals(String.valueOf(deviceID))) {
-                        try {
-                            RequestUtils.removeListElement(this,bacnetDevice.getBacNetDeviceInfo(),notificationClassObject.getObjectIdentifier(),PropertyIdentifier.recipientList,destinationObject.getDestination());
-                        } catch (BACnetException e) {
-                           System.out.println("Could not delete " + destinationObject.getDeviceID() + " at " + notificationClassObject);
+            if(!bacnetDevice.getNotificationClassObjects().isEmpty()){
+                for (NotificationClassObject notificationClassObject : bacnetDevice.getNotificationClassObjects()) {
+                    for (DestinationObject destinationObject : notificationClassObject.getRecipientList()) {
+                        if (destinationObject.getDeviceID().equals(String.valueOf(deviceID))) {
+                            try {
+                                RequestUtils.removeListElement(this,bacnetDevice.getBacNetDeviceInfo(),notificationClassObject.getObjectIdentifier(),PropertyIdentifier.recipientList,destinationObject.getDestination());
+                            } catch (BACnetException e) {
+                               System.out.println("Could not delete " + destinationObject.getDeviceID() + " at " + notificationClassObject);
+                            }
                         }
                     }
                 }
+                System.out.println("Deleted");
+            } else{
+                System.out.println("No NC object on this device");
             }
-            System.out.println("Deleted");
-
+            scanAndAddAllNCObjects(bacnetDevice);
         }
-        updateAfterPropertyWritten();
+
     }
 
     /**
      * Reads all BACnet Objects of all remote devises
     */
-    private void scanAndAddAllNCObjects(){
-        for (BACnetDevice bacnetDevice : getBacnetDevices()) {
-            for(NotificationClassObject noti : bacnetDevice.getNotificationClassObjects()){
-                noti.getRecipientList().clear();
-            }
-            bacnetDevice.getNotificationClassObjects().clear();
-            try {
-                List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
-                        RequestUtils.sendReadPropertyAllowNull(
-                                this, bacnetDevice.getBacNetDeviceInfo(), bacnetDevice.getBacNetDeviceInfo().getObjectIdentifier(),
-                                PropertyIdentifier.objectList)).getValues();
-                for (ObjectIdentifier oid : oids) {
-                    if(oid.getObjectType().equals(ObjectType.notificationClass)){
-                    NotificationClassObject notificationClassObject = new NotificationClassObject(oid,bacnetDevice);
+    public void scanAndAddAllNCObjects(BACnetDevice bacnetDevice) {
+        bacnetDevice.getNotificationClassObjects().clear();
+        try {
+            List<ObjectIdentifier> oids = ((SequenceOf<ObjectIdentifier>)
+                    RequestUtils.sendReadPropertyAllowNull(
+                            this, bacnetDevice.getBacNetDeviceInfo(), bacnetDevice.getBacNetDeviceInfo().getObjectIdentifier(),
+                            PropertyIdentifier.objectList)).getValues();
+            for (ObjectIdentifier oid : oids) {
+                if (oid.getObjectType().equals(ObjectType.notificationClass)) {
+                    NotificationClassObject notificationClassObject = new NotificationClassObject(oid, bacnetDevice);
                     bacnetDevice.getNotificationClassObjects().add(notificationClassObject);
                     System.out.println("NC: " + notificationClassObject.getObjectName()
                             + " added for device " + bacnetDevice.getBacNetDeviceInfo().getName());
                     setSummedDestinationsIDs(notificationClassObject.getRecipientList());
-
-                        }
-                    }
-
-                } catch (BACnetException e) {
-                System.err.println("Failed to read objects");
+                }
             }
+        } catch (BACnetException e) {
+            System.err.println("Failed to read objects");
         }
     }
 

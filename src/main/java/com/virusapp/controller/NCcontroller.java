@@ -17,6 +17,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NCcontroller implements Initializable {
 
@@ -65,15 +67,13 @@ public class NCcontroller implements Initializable {
     @FXML
     private TableColumn<NotificationClassObject, NotificationClassObject> recipientListColumn;
 
-
-
     private void loadRemoteDevices() {
         try{
 
             deviceNameColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("device"));
             idColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("id"));
-
             remoteDeviceTableView.setItems(ownDeviceModel.getBacnetDevices());
+            refreshTableSchedule();
             remoteDeviceTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -153,5 +153,16 @@ public class NCcontroller implements Initializable {
         { ownDeviceModel.sendNewDestinationToAllNC(Integer.parseInt(instanceNumber.getText()));}
         this.notifiTableView.refresh();
     }
+
+    public void refreshTableSchedule(){
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            public void run() {
+                remoteDeviceTableView.refresh();
+                System.out.println("Refresh device list");
+            }
+        }, 0, 2000);
+    }
+
 
 }

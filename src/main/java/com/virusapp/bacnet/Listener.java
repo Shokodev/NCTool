@@ -8,7 +8,10 @@ public class Listener extends DeviceEventAdapter {
 
     @Override
     public void iAmReceived(RemoteDevice remoteDevice) {
+        System.out.println("New device discovered " + remoteDevice.getName());
         BACnetDevice bacnetDevice = new BACnetDevice(remoteDevice);
+        App.ownDevice.getRemoteDeviceInformation(bacnetDevice);
+        App.ownDevice.scanAndAddAllNCObjects(bacnetDevice);
         App.ownDevice.getBacnetDevices().add(bacnetDevice);
     }
 

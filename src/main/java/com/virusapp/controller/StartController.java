@@ -36,6 +36,7 @@ public class StartController implements Initializable {
         ipNetworkBuilder.withBroadcast("255.255.255.255", IpNetwork.BVLC_TYPE);
         ipNetworkBuilder.withPort(Integer.parseInt(bacport.getValue()));
         DefaultTransport defaultTransport = new DefaultTransport(ipNetworkBuilder.build());
+        System.out.println("Network created");
         App.ownDevice = new OwnDevice(Integer.parseInt(deviceID.getText()), defaultTransport);
     }
 
