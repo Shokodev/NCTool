@@ -12,8 +12,12 @@ import com.serotonin.bacnet4j.type.primitive.ObjectIdentifier;
 import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.App;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DestinationObject {
+
+    static final Logger LOG = LoggerFactory.getLogger(DestinationObject.class);
 
     //frontend
     private String processIdentifierID;
@@ -24,6 +28,7 @@ public class DestinationObject {
     private Destination destination;
 
     public DestinationObject(Destination destination, NotificationClassObject noti){
+
         this.processIdentifierID = String.valueOf(destination.getProcessIdentifier().intValue());
         this.deviceID = (String.valueOf(destination.getRecipient().getDevice().getInstanceNumber()));
         this.noti = noti;
@@ -53,7 +58,7 @@ public class DestinationObject {
         try {
             RequestUtils.writeProperty(App.ownDevice,noti.getBacnetDevice().getBacNetDeviceInfo(),noti.getObjectIdentifier(),PropertyIdentifier.recipientList,destination,8);
         } catch (BACnetException e) {
-            System.err.println("Could not write destination: " + destination.getRecipient().toString() + "at " + noti.getObjectIdentifier() + " on " + noti.getBacnetDevice().bacNetDeviceInfo.getName());
+            LOG.warn("Could not write destination: " + destination.getRecipient().toString() + "at " + noti.getObjectIdentifier() + " on " + noti.getBacnetDevice().bacNetDeviceInfo.getName());
         }
     }
 

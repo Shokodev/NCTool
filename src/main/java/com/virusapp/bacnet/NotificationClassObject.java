@@ -11,6 +11,8 @@ import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.App;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -23,15 +25,16 @@ import java.util.List;
  */
 public class NotificationClassObject extends RemoteObject {
 
-    //backend
-    private BACnetDevice bacnetDevice;
-    private ObservableList<DestinationObject> recipientList = FXCollections.observableArrayList();
+    static final Logger LOG = LoggerFactory.getLogger(NotificationClassObject.class);
 
+    //backend
+    private final BACnetDevice bacnetDevice;
+    private final ObservableList<DestinationObject> recipientList = FXCollections.observableArrayList();
 
     //frontend
-    private String description;
-    private Integer notificationClass;
-    private String name;
+    private final String description;
+    private final Integer notificationClass;
+    private final String name;
     private Integer prioToOffNormal;
     private Integer prioToFault;
     private Integer prioToNormal;
@@ -54,7 +57,7 @@ public class NotificationClassObject extends RemoteObject {
         try {
             return RequestUtils.readProperty(App.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), PropertyIdentifier.objectName, null).toString();
         } catch (BACnetException e) {
-            System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
+            LOG.warn("Could not read objectName of:" + super.getObjectIdentifier());
         }
         return "COM";
     }
@@ -78,7 +81,7 @@ public class NotificationClassObject extends RemoteObject {
                 recipientList.add(destinationObject);
             }
         } catch (BACnetException e) {
-            System.err.println("Could not read recipient of:" + super.getObjectIdentifier());
+            LOG.warn("Could not read recipient of:" + super.getObjectIdentifier());
         }
     }
 
@@ -86,7 +89,7 @@ public class NotificationClassObject extends RemoteObject {
         try {
             return RequestUtils.readProperty(App.ownDevice, bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(), propertyIdentifier, null).toString();
         } catch (BACnetException e) {
-            System.err.println("Could not read objectName of:" + super.getObjectIdentifier());
+            LOG.warn("Could not read objectName of:" + super.getObjectIdentifier());
         }
         return "COM";
     }
@@ -104,7 +107,7 @@ public class NotificationClassObject extends RemoteObject {
                     bacnetDevice.getBacNetDeviceInfo(), super.getObjectIdentifier(),
                     PropertyIdentifier.priority, new UnsignedInteger(3)).toString());
         } catch (BACnetException e) {
-            System.err.println("Could not read priority of:" + super.getObjectIdentifier());
+            LOG.warn("Could not read priority of:" + super.getObjectIdentifier());
         }
     }
 

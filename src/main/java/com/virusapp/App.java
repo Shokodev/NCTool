@@ -33,9 +33,13 @@ public class App extends Application {
     @Override
     public void start(Stage stage) {
         loadStartView();
-        ownDevice.createLocalDevice();
-        LOG.debug("Device created " + System.currentTimeMillis());
         loadNcView(stage);
+        Runnable runnable = () -> {
+            App.ownDevice.createLocalDevice();
+            LOG.debug("Device created " + System.currentTimeMillis());
+        };
+        Thread newThread = new Thread(runnable);
+        newThread.start();
     }
 
     private void loadStartView() {
@@ -54,7 +58,6 @@ public class App extends Application {
     }
 
     private void loadNcView(Stage stage) {
-
         try {
             NCcontroller ncController = new NCcontroller(ownDevice);
             FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/view/NCcontroller.fxml"));

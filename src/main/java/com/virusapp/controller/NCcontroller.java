@@ -1,5 +1,6 @@
 package com.virusapp.controller;
 
+import com.sun.scenario.effect.impl.sw.java.JSWBlend_GREENPeer;
 import com.virusapp.App;
 import com.virusapp.application.AlertHelper;
 import com.virusapp.bacnet.BACnetDevice;
@@ -14,7 +15,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.util.Callback;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.Timer;
@@ -22,7 +27,8 @@ import java.util.TimerTask;
 
 public class NCcontroller implements Initializable {
 
-    private OwnDevice ownDeviceModel;
+    private final OwnDevice ownDeviceModel;
+    static final Logger LOG = LoggerFactory.getLogger(NCcontroller.class);
 
     public NCcontroller(OwnDevice model) {
         this.ownDeviceModel = model;
@@ -32,6 +38,11 @@ public class NCcontroller implements Initializable {
     private TextField instanceNumber;
     @FXML
     private TextField instanceNumberDelete;
+
+    @FXML
+    private ProgressBar progressBar;
+
+
 
     @FXML
     private Button writeToDevice;
@@ -67,13 +78,13 @@ public class NCcontroller implements Initializable {
     @FXML
     private TableColumn<NotificationClassObject, NotificationClassObject> recipientListColumn;
 
+
     private void loadRemoteDevices() {
         try{
 
             deviceNameColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("device"));
             idColumn.setCellValueFactory(new PropertyValueFactory<BACnetDevice, String>("id"));
             remoteDeviceTableView.setItems(ownDeviceModel.getBacnetDevices());
-            refreshTableSchedule();
             remoteDeviceTableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
                 @Override
                 public void handle(MouseEvent event) {
@@ -139,6 +150,14 @@ public class NCcontroller implements Initializable {
     AlertHelper.denyString(instanceNumber);
     writeToDevice.setOnAction(event -> onWriteButtonAction());
     deleteButton.setOnAction(event -> onDeleteButtonAction());
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            private double progress;
+            public void run() {
+                int x = App.ownDevice.getScanSeconds();
+                progressBar.setProgress(this.progress = progress + (1.0 / x));
+            }
+        }, 0, 1000);
     }
 
     public void onDeleteButtonAction(){
@@ -153,16 +172,5 @@ public class NCcontroller implements Initializable {
         { ownDeviceModel.sendNewDestinationToAllNC(Integer.parseInt(instanceNumber.getText()));}
         this.notifiTableView.refresh();
     }
-
-    public void refreshTableSchedule(){
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
-            public void run() {
-                remoteDeviceTableView.refresh();
-                System.out.println("Refresh device list");
-            }
-        }, 0, 2000);
-    }
-
 
 }

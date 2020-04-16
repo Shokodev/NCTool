@@ -13,6 +13,8 @@ import com.serotonin.bacnet4j.type.primitive.UnsignedInteger;
 import com.serotonin.bacnet4j.util.RequestUtils;
 import com.virusapp.App;
 import com.virusapp.application.AlertHelper;
+import com.virusapp.controller.NCcontroller;
+import com.virusapp.controller.StartController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
@@ -20,6 +22,7 @@ import javafx.scene.control.Alert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,21 +33,26 @@ import java.util.List;
  *  of this license document, but changing it is not allowed.
  */
 public class OwnDevice extends LocalDevice {
-    private ObservableList<BACnetDevice> bacnetDevices = FXCollections.observableArrayList();
-    private ObservableMap<String,Integer> summedDestinationsIDs = FXCollections.observableHashMap();
+    private final ObservableList<BACnetDevice> bacnetDevices = FXCollections.observableArrayList();
+    private final ObservableMap<String,Integer> summedDestinationsIDs = FXCollections.observableHashMap();
+    private Listener listener;
+    private final int scanSeconds;
+
     static final Logger LOG = LoggerFactory.getLogger(OwnDevice.class);
 
-    public OwnDevice(int deviceNumber, Transport transport) {
+    public OwnDevice(int deviceNumber, Transport transport, int scanSeconds) {
         super(deviceNumber, transport);
+        this.scanSeconds = scanSeconds;
     }
 
     public void createLocalDevice() {
-        Listener listener = new Listener();
+
+        this.listener = new Listener();
         getEventHandler().addListener(listener);
         try {
             initialize();
             System.out.println("Successfully created LocalDevice " + getInstanceNumber());
-            LOG.debug("Successfully created LocalDevice " + getInstanceNumber());
+            LOG.info("Successfully created LocalDevice " + getInstanceNumber());
         } catch (Exception e) {
             System.err.println("LocalDevice initialize failed, restart the application may solve this problem");
             LOG.error("LocalDevice initialize failed, restart the application may solve this problem");
@@ -53,22 +61,25 @@ public class OwnDevice extends LocalDevice {
     }
 
     /**
-     * Send WhoIs request to the BACnet network
+     *Send WhoIs request to the BACnet network
      */
-    private void scanForRemoteDevices() {
-        getBacnetDevices().clear();
-        System.out.println("Scan for remote devices.........");
+    private void scanForRemoteDevices()  {
+        LOG.info("Scan for remote devices.........");
         try {
             WhoIsRequest request = new WhoIsRequest();
             sendGlobalBroadcast(request);
-            Thread.sleep(1000 * 5);
+            Thread.sleep(1000 * scanSeconds);//1000ms * int
             //End scan after 5s if no device is found
-            if (!alertNoDeviceFound()) {
+            if(bacnetDevices.isEmpty()){
                 terminate();
+                getEventHandler().removeListener(listener);
+                LOG.warn("No remote devices found");
+            } else {
+                getEventHandler().removeListener(listener);
+                LOG.info("{} BACnet devices finally registered at local device", bacnetDevices.size());
             }
-
-        } catch (InterruptedException bac) {
-            System.err.println("Network scan failure, restart the application may solve this problem");
+        }catch(InterruptedException bac){
+            LOG.info("Network scan failure, restart the application may solve this problem");
         }
     }
 
@@ -180,13 +191,13 @@ public class OwnDevice extends LocalDevice {
                 if (oid.getObjectType().equals(ObjectType.notificationClass)) {
                     NotificationClassObject notificationClassObject = new NotificationClassObject(oid, bacnetDevice);
                     bacnetDevice.getNotificationClassObjects().add(notificationClassObject);
-                    System.out.println("NC: " + notificationClassObject.getObjectName()
+                    LOG.info("NC: " + notificationClassObject.getObjectName()
                             + " added for device " + bacnetDevice.getBacNetDeviceInfo().getName());
                     setSummedDestinationsIDs(notificationClassObject.getRecipientList());
                 }
             }
         } catch (BACnetException e) {
-            System.err.println("Failed to read objects");
+            LOG.warn("Failed to read objects");
         }
     }
 
@@ -198,5 +209,8 @@ public class OwnDevice extends LocalDevice {
         }
     }
 
+    public int getScanSeconds() {
+        return scanSeconds;
     }
+}
 
