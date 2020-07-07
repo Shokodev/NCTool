@@ -110,20 +110,24 @@ public class NCcontroller implements Initializable {
         prioToFaultColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("prioToFault"));
         prioToNormalColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("prioToNormal"));
         notificationClassColumn.setCellValueFactory(new PropertyValueFactory<NotificationClassObject, String>("notificationClass"));
-
         recipientListColumn.setCellValueFactory(features -> new ReadOnlyObjectWrapper<>(features.getValue()));
-        recipientListColumn.setCellFactory(new Callback<>() {
+        recipientListColumn.setCellFactory(new Callback() {
             @Override
+            public Object call(Object param) {
+                return null;
+            }
+
+
             public TableCell<NotificationClassObject, NotificationClassObject> call(TableColumn<NotificationClassObject, NotificationClassObject> param) {
 
-                return new TableCell<>() {
+                return new TableCell() {
                     final Button button = new Button();
                     {
                         Image imageDesti = new Image(getClass().getResourceAsStream("/view/destiMenu.png"));
                         button.setMinWidth(15);
                         button.setGraphic(new ImageView(imageDesti));
                     }
-                    @Override
+
                     public void updateItem(NotificationClassObject notificationClassObject, boolean empty) {
                         super.updateItem(notificationClassObject, empty);
                         if (notificationClassObject != null) {
